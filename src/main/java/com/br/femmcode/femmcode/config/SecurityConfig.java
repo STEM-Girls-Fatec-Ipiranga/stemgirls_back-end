@@ -62,8 +62,11 @@ public class SecurityConfig {
             
             // Define as permissões de acesso para os endpoints
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/auth/**").permitAll() // Endpoints de auth são públicos
-                .anyRequest().authenticated() // O resto precisa de autenticação
+                .anyRequest().permitAll() // 🔓 libera tudo
+               /*.requestMatchers("/api/auth/**").permitAll() // Endpoints de auth são públicos
+               .requestMatchers("/api/comunidades/**").permitAll()
+               .anyRequest().authenticated() // O resto precisa de autenticação*/
+
             )
 
             // Diz ao Spring para usar nosso provedor de autenticação

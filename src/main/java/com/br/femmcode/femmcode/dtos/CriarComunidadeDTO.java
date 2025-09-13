@@ -1,14 +1,15 @@
 package com.br.femmcode.femmcode.dtos;
 
-//import javax.validation.constraints.NotBlank;
-//import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class CriarComunidadeDTO {
-    //@NotBlank
-    //@Size(min = 3, max = 80)
+
+    @NotBlank(message = "O nome da comunidade é obrigatório")
+    @Size(min = 3, max = 80, message = "O nome deve ter entre 3 e 80 caracteres")
     private String nome;
 
-    //@Size(max = 1000)
+    @Size(max = 1000, message = "A descrição não pode ter mais que 1000 caracteres")
     private String descricao;
 
     private String nomeUsuarioCriador;

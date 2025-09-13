@@ -29,10 +29,13 @@ public class ComunidadeServiceImpl implements ComunidadeService {
         if (comunidadeRepository.existsByNome(dto.getNome())) {
             throw new IllegalArgumentException("Já existe uma comunidade com este nome");
         }
+
         String criador = dto.getNomeUsuarioCriador();
         Comunidade comunidade = new Comunidade(dto.getNome(), dto.getDescricao(), criador);
+
         comunidade.setCriadaEm(Instant.now());
         comunidade.setAtualizadaEm(Instant.now());
+
         Comunidade salva = comunidadeRepository.save(comunidade);
         return mapearParaResposta(salva);
     }
@@ -55,9 +58,16 @@ public class ComunidadeServiceImpl implements ComunidadeService {
     public ComunidadeRespostaDTO atualizar(String id, AtualizarComunidadeDTO dto) {
         Comunidade c = comunidadeRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Comunidade não encontrada com id: " + id));
-        if (dto.getNome() != null && !dto.getNome().isBlank()) c.setNome(dto.getNome());
-        if (dto.getDescricao() != null) c.setDescricao(dto.getDescricao());
+
+        if (dto.getNome() != null && !dto.getNome().isBlank()) {
+            c.setNome(dto.getNome());
+        }
+        if (dto.getDescricao() != null) {
+            c.setDescricao(dto.getDescricao());
+        }
+
         c.setAtualizadaEm(Instant.now());
+
         Comunidade atualizada = comunidadeRepository.save(c);
         return mapearParaResposta(atualizada);
     }
@@ -74,11 +84,13 @@ public class ComunidadeServiceImpl implements ComunidadeService {
     public ComunidadeRespostaDTO adicionarPost(String idComunidade, String idPost) {
         Comunidade c = comunidadeRepository.findById(idComunidade)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Comunidade não encontrada com id: " + idComunidade));
+
         if (!c.getIdsPosts().contains(idPost)) {
             c.getIdsPosts().add(idPost);
             c.setAtualizadaEm(Instant.now());
             comunidadeRepository.save(c);
         }
+
         return mapearParaResposta(c);
     }
 
@@ -86,10 +98,12 @@ public class ComunidadeServiceImpl implements ComunidadeService {
     public ComunidadeRespostaDTO removerPost(String idComunidade, String idPost) {
         Comunidade c = comunidadeRepository.findById(idComunidade)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Comunidade não encontrada com id: " + idComunidade));
+
         if (c.getIdsPosts().remove(idPost)) {
             c.setAtualizadaEm(Instant.now());
             comunidadeRepository.save(c);
         }
+
         return mapearParaResposta(c);
     }
 

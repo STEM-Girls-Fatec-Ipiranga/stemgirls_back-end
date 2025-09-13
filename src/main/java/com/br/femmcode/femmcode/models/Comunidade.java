@@ -10,21 +10,21 @@ import java.util.List;
 public class Comunidade {
     @Id
     private String id;
-    private String name;
-    private String description;
-    private String creatorUsername;
-    private Instant createdAt;
-    private Instant updatedAt;
-    private List<String> postIds = new ArrayList<>();
+    private String nome;
+    private String descricao;
+    private String nomeUsuarioCriador;
+    private Instant criadaEm;
+    private Instant atualizadaEm;
+    private List<String> idsPosts = new ArrayList<>();
 
     public Comunidade() {}
 
-    public Comunidade(String name, String description, String creatorUsername) {
-        this.name = name;
-        this.description = description;
-        this.creatorUsername = creatorUsername;
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
+    public Comunidade(String nome, String descricao, String nomeUsuarioCriador) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.nomeUsuarioCriador = nomeUsuarioCriador;
+        this.criadaEm = Instant.now();
+        this.atualizadaEm = Instant.now();
     }
 
     public String getId() {
@@ -35,51 +35,51 @@ public class Comunidade {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNome() {
+        return nome;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
-    public String getCreatorUsername() {
-        return creatorUsername;
+    public String getNomeUsuarioCriador() {
+        return nomeUsuarioCriador;
     }
 
-    public void setCreatorUsername(String creatorUsername) {
-        this.creatorUsername = creatorUsername;
+    public void setNomeUsuarioCriador(String nomeUsuarioCriador) {
+        this.nomeUsuarioCriador = nomeUsuarioCriador;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
+    public Instant getCriadaEm() {
+        return criadaEm;
     }
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
+    public void setCriadaEm(Instant criadaEm) {
+        this.criadaEm = criadaEm;
     }
 
-    public Instant getUpdatedAt() {
-        return updatedAt;
+    public Instant getAtualizadaEm() {
+        return atualizadaEm;
     }
 
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setAtualizadaEm(Instant atualizadaEm) {
+        this.atualizadaEm = atualizadaEm;
     }
 
-    public List<String> getPostIds() {
-        return postIds;
+    public List<String> getIdsPosts() {
+        return idsPosts;
     }
 
-    public void setPostIds(List<String> postIds) {
-        this.postIds = postIds;
+    public void setIdsPosts(List<String> idsPosts) {
+        this.idsPosts = idsPosts;
     }
 }
