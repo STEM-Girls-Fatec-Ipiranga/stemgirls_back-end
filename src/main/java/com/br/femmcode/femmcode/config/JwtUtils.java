@@ -1,5 +1,8 @@
+// src/main/java/com/br/femmcode/femmcode/config/JwtUtils.java
 package com.br.femmcode.femmcode.config;
 
+import com.br.femmcode.femmcode.models.Empresa;
+import com.br.femmcode.femmcode.models.Usuario;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,21 +23,32 @@ public class JwtUtils {
     private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
-        // O "principal" é o objeto que representa o usuário logado
-        // Aqui, estamos assumindo que o UserDetails do Spring Security é usado
-        // e que o getUsername() retorna o e-mail do usuário.
-        String userPrincipal = authentication.getName();
+        Object principal = authentication.getPrincipal();
+        String email;
+
+        // Captura o e-mail dependendo do tipo de usuário
+        if (principal instanceof Usuario usuario) {
+            email = usuario.getEmail();
+        } else if (principal instanceof Empresa empresa) {
+            email = empresa.getEmail();
+        } else {
+            email = authentication.getName(); // fallback de segurança
+        }
 
         return Jwts.builder()
-                .setSubject(userPrincipal)
+                .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {
@@ -44,15 +58,14 @@ public class JwtUtils {
         } catch (SignatureException e) {
             logger.error("Assinatura do JWT inválida: {}", e.getMessage());
         } catch (MalformedJwtException e) {
-            logger.error("Token JWT inválido: {}", e.getMessage());
+            logger.error("Token JWT malformado: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
             logger.error("Token JWT expirado: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
             logger.error("Token JWT não suportado: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            logger.error("A string de claims do JWT está vazia: {}", e.getMessage());
+            logger.error("Claims JWT vazios: {}", e.getMessage());
         }
-
         return false;
     }
 }

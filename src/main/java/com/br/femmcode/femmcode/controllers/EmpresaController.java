@@ -1,0 +1,87 @@
+package com.br.femmcode.femmcode.controllers;
+
+import com.br.femmcode.femmcode.config.JwtUtils;
+import com.br.femmcode.femmcode.dtos.EmpresaDTO;
+import com.br.femmcode.femmcode.dtos.JwtResponse;
+import com.br.femmcode.femmcode.dtos.LoginRequest;
+import com.br.femmcode.femmcode.models.Empresa;
+import com.br.femmcode.femmcode.models.StatusEmpresa;
+import com.br.femmcode.femmcode.models.Usuario;
+import com.br.femmcode.femmcode.repositories.EmpresaRepository;
+import com.br.femmcode.femmcode.services.EmpresaService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/empresa")
+@CrossOrigin(origins = "http://localhost:5173")
+public class EmpresaController {
+
+    @Autowired
+    private EmpresaService empresaService;
+
+    @Autowired
+    private EmpresaRepository empresaRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @PostMapping("/criar")
+    public ResponseEntity<Empresa> criarEmpresa(@RequestBody EmpresaDTO empresaDTO) {
+        Empresa empresa = empresaService.criarEmpresa(empresaDTO);
+        return ResponseEntity.ok(empresa);
+    }
+
+    // Aprovar manualmente (ex: via Postman)
+    @PutMapping("/{email}/aprovar")
+    public Empresa aprovar(@PathVariable String email) {
+        return empresaService.aprovarEmpresa(email);
+    }
+
+    @PutMapping("/{email}/reprovar")
+    public Empresa reprovar(@PathVariable String email) {
+        return empresaService.reprovarEmpresa(email);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest dto) {
+        try {
+            // Autentica com e-mail e senha
+            var authToken = new UsernamePasswordAuthenticationToken(dto.email(), dto.senha());
+            var auth = authenticationManager.authenticate(authToken);
+
+            // Pega a empresa autenticada
+            var empresa = empresaRepository.findByEmail(dto.email())
+                    .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+
+            // Verifica o status antes de liberar o token
+            if (empresa.getStatus() != StatusEmpresa.APROVADO) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("A sua conta ainda está em análise. Aguarde aprovação.");
+            }
+
+            // Gera o token JWT
+            var token = jwtUtils.generateJwtToken(auth);
+
+            return ResponseEntity.ok(Map.of(
+                    "token", token,
+                    "empresa", empresa.getNomeFantasia()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("E-mail ou senha incorretos.");
+        }
+    }
+}
