@@ -5,6 +5,7 @@ import com.br.femmcode.femmcode.dtos.JwtResponse;
 import com.br.femmcode.femmcode.dtos.LoginRequest;
 import com.br.femmcode.femmcode.dtos.SignUpRequestUsuario;
 import com.br.femmcode.femmcode.models.Empresa;
+import com.br.femmcode.femmcode.models.StatusEmpresa;
 import com.br.femmcode.femmcode.models.Usuario;
 import com.br.femmcode.femmcode.services.EmpresaService;
 import com.br.femmcode.femmcode.services.UsuarioService;
@@ -53,23 +54,34 @@ public class AuthController {
     }
 
     // --- LOGIN EMPRESA ---
-    @PostMapping("/login-empresa")
-    public ResponseEntity<?> loginEmpresa(@RequestBody LoginRequest loginRequest) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.senha())
-            );
+   @PostMapping("/login-empresa")
+public ResponseEntity<?> loginEmpresa(@RequestBody LoginRequest loginRequest) {
+    try {
+        Empresa empresa = empresaService.findByEmail(loginRequest.email());
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtUtils.generateJwtToken(authentication);
-
-            Empresa empresa = empresaService.findByEmail(loginRequest.email());
-            return ResponseEntity.ok(new JwtResponse(jwt, empresa));
-
-        } catch (Exception e) {
+        // Verifica senha
+        if (!empresaService.passwordMatches(loginRequest.senha(), empresa.getSenha())) {
             return ResponseEntity.status(401).body("Erro: E-mail ou senha inválidos para empresa.");
         }
+
+        // Verifica status
+        if (empresa.getStatus() != StatusEmpresa.APROVADO) {
+            return ResponseEntity.status(403).body("Erro: Sua conta ainda está em análise ou foi reprovada.");
+        }
+
+        // Gera JWT
+        String jwt = jwtUtils.generateJwtTokenFromEmail(empresa.getEmail());
+
+        // Retorna resposta
+        return ResponseEntity.ok(new JwtResponse(jwt, empresa));
+
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(401).body("Erro: " + e.getMessage());
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body("Erro interno: " + e.getMessage());
     }
+}
+
 
     // --- ESQUECI A SENHA (USUÁRIO) ---
     @PostMapping("/forgot-password")

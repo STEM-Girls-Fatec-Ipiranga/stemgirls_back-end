@@ -34,6 +34,7 @@ public class JwtUtils {
         } else {
             email = authentication.getName(); // fallback de segurança
         }
+        
 
         return Jwts.builder()
                 .setSubject(email)
@@ -67,5 +68,10 @@ public class JwtUtils {
             logger.error("Claims JWT vazios: {}", e.getMessage());
         }
         return false;
+    }
+
+    public String generateJwtTokenFromEmail(String email) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'generateJwtTokenFromEmail'");
     }
 }

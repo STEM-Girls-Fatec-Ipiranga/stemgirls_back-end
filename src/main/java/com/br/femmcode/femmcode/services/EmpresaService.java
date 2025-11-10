@@ -31,9 +31,10 @@ public class EmpresaService implements UserDetailsService {
         if (empresaRepository.existsByEmail(dto.email())) {
             throw new RuntimeException("Erro: E-mail já está em uso!");
         }
-        if (empresaRepository.existsBySenha(dto.senha())) {
-            throw new RuntimeException("Erro: CNPJ já está cadastrado!");
-        }
+       if (empresaRepository.existsByCnpj(dto.cnpj())) {
+        throw new RuntimeException("Erro: CNPJ já está cadastrado!");
+}
+
 
         Empresa newEmpresa = new Empresa();
         newEmpresa.setNomeEmpresa(dto.nomeEmpresa());
@@ -44,6 +45,9 @@ public class EmpresaService implements UserDetailsService {
         newEmpresa.setTelefone(dto.telefone());
         newEmpresa.setSite(dto.site());
         newEmpresa.setStatus(StatusEmpresa.PENDENTE);
+        newEmpresa.setRole(Role.EMPRESA);
+        
+
 
         Empresa saved = empresaRepository.save(newEmpresa);
         emailService.sendEmpresaApprovalEmail(saved);
@@ -88,5 +92,11 @@ public class EmpresaService implements UserDetailsService {
 
         return empresa;
     }
+
+    public boolean passwordMatches(String senha, String senha2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'passwordMatches'");
+    }
+    
 
 }
