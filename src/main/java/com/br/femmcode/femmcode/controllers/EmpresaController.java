@@ -44,7 +44,7 @@ public class EmpresaController {
         return ResponseEntity.ok(empresa);
     }
 
-    // Aprovar manualmente (ex: via Postman)
+
     @PutMapping("/{email}/aprovar")
     public Empresa aprovar(@PathVariable String email) {
         return empresaService.aprovarEmpresa(email);
@@ -58,26 +58,25 @@ public class EmpresaController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest dto) {
         try {
-            // Autentica com e-mail e senha
+
             var authToken = new UsernamePasswordAuthenticationToken(dto.email(), dto.senha());
             var auth = authenticationManager.authenticate(authToken);
 
-            // Pega a empresa autenticada
+
             var empresa = empresaRepository.findByEmail(dto.email())
                     .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
 
-            // Verifica o status antes de liberar o token
+
             if (empresa.getStatus() != StatusEmpresa.APROVADO) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body("A sua conta ainda está em análise. Aguarde aprovação.");
             }
 
-            // Gera o token JWT
             var token = jwtUtils.generateJwtToken(auth);
 
             return ResponseEntity.ok(Map.of(
                     "token", token,
-                    "empresa", empresa.getNomeFantasia()
+                    "empresa", empresa.getNomeEmpresa()
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

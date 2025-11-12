@@ -1,5 +1,7 @@
 package com.br.femmcode.femmcode.config;
 
+import com.br.femmcode.femmcode.services.CustomUserDetailsService;
+import com.br.femmcode.femmcode.services.EmpresaService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,8 +10,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -36,37 +36,28 @@ public class SecurityConfig {
         return new AuthTokenFilter();
     }
 
-    // UserDetailsService simples para teste
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> {
-            // Aqui você pode buscar o usuário no banco MongoDB
-            if ("admin".equals(username)) {
-                return org.springframework.security.core.userdetails.User
-                        .withUsername("admin")
-                        .password(passwordEncoder().encode("123456"))
-                        .authorities("ROLE_ADMIN")
-                        .build();
-            } else {
-                throw new UsernameNotFoundException("Usuário não encontrado: " + username);
-            }
-        };
-    }
-
-    // DaoAuthenticationProvider usando o UserDetailsService acima
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return authProvider;
-    }
-
     // AuthenticationManager padrão
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+    // DaoAuthenticationProvider usando o EmpresaService
+    /*@Bean
+    public DaoAuthenticationProvider authenticationProvider(EmpresaService empresaService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(empresaService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return authProvider;
+    }*/
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService customUserDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return authProvider;
+    }
+
 
     // Configuração de CORS
     @Bean
@@ -86,14 +77,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll()
-            )
-            .authenticationProvider(authenticationProvider)
-            .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().permitAll()
+                )
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

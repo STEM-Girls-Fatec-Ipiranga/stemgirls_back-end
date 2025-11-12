@@ -32,7 +32,6 @@ public class EmailService {
         mailSender.send(message);
     }*/
 
-    // ✅ VERSÃO ATUAL COMPATÍVEL COM UsuarioService
     public void sendPasswordResetEmail(Usuario usuario, String token) {
         String assunto = "Redefinição de Senha - FemmCode 💜";
         String linkRedefinicao = "http://localhost:5173/reset-password?token=" + token;
@@ -52,7 +51,6 @@ public class EmailService {
         mailSender.send(email);
     }
 
-    // --- E-MAIL DE AVISO DE EMPRESA PARA APROVAÇÃO ---
     public void sendEmpresaApprovalEmail(Empresa empresa) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("nao-responda@femmcode.com");
@@ -61,11 +59,9 @@ public class EmailService {
         message.setText(
                 "Uma nova empresa se cadastrou e aguarda sua aprovação:\n\n" +
                         "Nome Empresa: " + empresa.getNomeEmpresa() + "\n" +
-                        "Nome Fantasia: " + empresa.getNomeFantasia() + "\n" +
                         "CNPJ: " + empresa.getCnpj() + "\n" +
                         "E-mail: " + empresa.getEmail() + "\n" +
                         "Telefone: " + empresa.getTelefone() + "\n" +
-                        "Site: " + empresa.getSite() + "\n\n" +
                         "ID da empresa: " + empresa.getId() + "\n\n" +
                         "Use o endpoint PUT /empresa/{id}/aprovar no backend para liberar o acesso."
         );
@@ -79,7 +75,7 @@ public class EmailService {
                         "Infelizmente sua solicitação de cadastro na plataforma StTEM Girls foi reprovada. " +
                         "Caso deseje revisar seus dados e tentar novamente, entre em contato com nossa equipe.\n\n" +
                         "Atenciosamente,\nEquipe STEM Girls 💜",
-                empresa.getNomeFantasia()
+                empresa.getNomeEmpresa()
         );
 
         SimpleMailMessage email = new SimpleMailMessage();
@@ -90,6 +86,24 @@ public class EmailService {
         mailSender.send(email);
     }
 
+    public void sendEmpresaAprovadaEmail(Empresa empresa) {
+        String assunto = "Parabéns! Seu cadastro foi aprovado 💜";
+        String mensagem = String.format(
+                "Olá, %s!\n\n" +
+                        "Analisamos seus dados e seu cadastro foi aprovado na plataforma STEM Girls! 🎉\n\n" +
+                        "Agora você já pode acessar sua conta e aproveitar todos os recursos disponíveis para empresas.\n" +
+                        "Acesse: http://localhost:5173/login\n\n" +
+                        "Bem-vinda à nossa comunidade!\n\n" +
+                        "Com carinho,\nEquipe STEM Girls 💫",
+                empresa.getNomeEmpresa()
+        );
 
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(empresa.getEmail());
+        email.setSubject(assunto);
+        email.setText(mensagem);
+
+        mailSender.send(email);
+    }
 
 }

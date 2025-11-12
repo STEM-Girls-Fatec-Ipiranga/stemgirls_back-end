@@ -16,15 +16,13 @@ import lombok.AllArgsConstructor;
 public class Empresa {
 
     @Id
-    private String id; // use String para Mongo (ObjectId será gerado automaticamente se null)
+    private String id;
 
     private String nomeEmpresa;
     private String cnpj;
-    private String nomeFantasia;
     private String email;
     private String senha;
     private String telefone;
-    private String site;
     private Role role;
 
     private StatusEmpresa status = StatusEmpresa.PENDENTE;
@@ -53,14 +51,6 @@ public class Empresa {
         this.cnpj = cnpj;
     }
 
-    public String getNomeFantasia() {
-        return nomeFantasia;
-    }
-
-    public void setNomeFantasia(String nomeFantasia) {
-        this.nomeFantasia = nomeFantasia;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -83,14 +73,6 @@ public class Empresa {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-
-    public String getSite() {
-        return site;
-    }
-
-    public void setSite(String site) {
-        this.site = site;
     }
 
     public StatusEmpresa getStatus() {

@@ -14,9 +14,6 @@ public record EmpresaDTO(
         @Size(min = 14, max = 18, message = "CNPJ deve ter entre 14 e 18 caracteres")
         String cnpj,
 
-        @NotBlank(message = "O nome fantasia é obrigatório")
-        String nomeFantasia,
-
         @Email(message = "E-mail inválido")
         String email,
 
@@ -25,8 +22,6 @@ public record EmpresaDTO(
         String senha,
 
         String telefone,
-
-        String site,
 
         StatusEmpresa status
 ) {}

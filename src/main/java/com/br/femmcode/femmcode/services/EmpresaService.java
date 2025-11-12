@@ -39,11 +39,9 @@ public class EmpresaService implements UserDetailsService {
         Empresa newEmpresa = new Empresa();
         newEmpresa.setNomeEmpresa(dto.nomeEmpresa());
         newEmpresa.setCnpj(dto.cnpj());
-        newEmpresa.setNomeFantasia(dto.nomeFantasia());
         newEmpresa.setEmail(dto.email());
         newEmpresa.setSenha(passwordEncoder.encode(dto.senha()));
         newEmpresa.setTelefone(dto.telefone());
-        newEmpresa.setSite(dto.site());
         newEmpresa.setStatus(StatusEmpresa.PENDENTE);
         newEmpresa.setRole(Role.EMPRESA);
         
@@ -59,6 +57,10 @@ public class EmpresaService implements UserDetailsService {
         Empresa empresa = empresaRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
         empresa.setStatus(StatusEmpresa.APROVADO);
+        Empresa empresaAprovada = empresaRepository.save(empresa);
+
+        emailService.sendEmpresaAprovadaEmail(empresaAprovada);
+
         return empresaRepository.save(empresa);
     }
 
@@ -85,9 +87,8 @@ public class EmpresaService implements UserDetailsService {
 
         empresa.setStatus(StatusEmpresa.REPROVADO);
 
-        empresaRepository.delete(empresa); // 🚨 Remove do banco após o e-mail ser enviado
+        empresaRepository.delete(empresa);
 
-        // Envia e-mail informando a reprovação (se tiver método pronto)
         emailService.sendEmpresaReprovadaEmail(empresa);
 
         return empresa;
