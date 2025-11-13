@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.br.femmcode.femmcode.services.CustomUserDetailsService;
+
 import java.io.IOException;
 
 @Component
@@ -24,7 +26,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private JwtUtils jwtUtils;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private CustomUserDetailsService userDetailsService;
+
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
