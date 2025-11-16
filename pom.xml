@@ -8,7 +8,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.5</version>
-        <relativePath/> 
+        <relativePath/>
     </parent>
 
     <groupId>com.br.femmcode</groupId>
@@ -22,6 +22,7 @@
     </properties>
 
     <dependencies>
+
         <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -41,7 +42,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Spring Boot Starters -->
+        <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -77,18 +78,20 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Devtools e Test -->
+        <!-- Devtools & Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -99,4 +102,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

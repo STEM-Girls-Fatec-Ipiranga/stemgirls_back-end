@@ -5,6 +5,7 @@ import com.br.femmcode.femmcode.models.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,24 +33,40 @@ public class EmailService {
         mailSender.send(message);
     }*/
 
-    public void sendPasswordResetEmail(Usuario usuario, String token) {
-        String assunto = "Redefinição de Senha - FemmCode 💜";
-        String linkRedefinicao = "http://localhost:5173/reset-password?token=" + token;
+ public void sendPasswordResetEmail(Usuario usuario, String token) {
+    try {
+        String frontendUrl = "http://localhost:5173"; // coloque seu domínio aqui
+        String linkRedefinicao = frontendUrl + "/redefinir-senha/" + token;
 
-        String mensagem = "Olá, " + usuario.getNomeCompleto() + "!\n\n"
-                + "Recebemos uma solicitação para redefinir sua senha.\n"
-                + "Clique no link abaixo para criar uma nova senha:\n"
-                + linkRedefinicao + "\n\n"
-                + "Se você não solicitou isso, ignore este e-mail.\n\n"
-                + "Com carinho,\nEquipe FemmCode 💫";
+        String assunto = "Redefinição de Senha - StemGirls 💜";
 
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(usuario.getEmail());
-        email.setSubject(assunto);
-        email.setText(mensagem);
+        String mensagemHtml =
+                "<p>Olá, <strong>" + usuario.getNomeCompleto() + "</strong>!</p>" +
+                "<p>Recebemos uma solicitação para redefinir sua senha.</p>" +
+                "<p>Clique no botão abaixo para criar uma nova senha:</p>" +
+                "<p><a href=\"" + linkRedefinicao + "\" " +
+                "style=\"display:inline-block;padding:10px 18px;background:#8a2be2;color:white;text-decoration:none;border-radius:8px;\">" +
+                "Redefinir Senha</a></p>" +
+                "<p>Se você não solicitou isso, apenas ignore este e-mail.</p>" +
+                "<p>Com carinho,<br>Equipe StemGirls 💫</p>";
+
+        // Criar e-mail HTML
+        jakarta.mail.internet.MimeMessage email = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(email, true);
+
+        helper.setTo(usuario.getEmail());
+        helper.setSubject(assunto);
+        helper.setText(mensagemHtml, true); // <- true ATIVA HTML
 
         mailSender.send(email);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException("Erro ao enviar e-mail de redefinição");
     }
+}
+
+    
 
     public void sendEmpresaApprovalEmail(Empresa empresa) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -72,7 +89,7 @@ public class EmailService {
         String assunto = "Status da sua solicitação - Reprovada";
         String mensagem = String.format(
                 "Olá, %s!\n\n" +
-                        "Infelizmente sua solicitação de cadastro na plataforma StTEM Girls foi reprovada. " +
+                        "Infelizmente sua solicitação de cadastro na plataforma Stem Girls foi reprovada. " +
                         "Caso deseje revisar seus dados e tentar novamente, entre em contato com nossa equipe.\n\n" +
                         "Atenciosamente,\nEquipe STEM Girls 💜",
                 empresa.getNomeEmpresa()

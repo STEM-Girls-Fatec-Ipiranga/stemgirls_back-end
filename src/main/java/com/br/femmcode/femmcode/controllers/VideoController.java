@@ -2,6 +2,7 @@ package com.br.femmcode.femmcode.controllers;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,7 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
+
 import com.br.femmcode.femmcode.models.Video;
 import com.br.femmcode.femmcode.services.VideoService;
 
@@ -20,6 +23,8 @@ import com.br.femmcode.femmcode.services.VideoService;
 public class VideoController {
 
     private final VideoService videoService;
+    private static final String UPLOAD_DIR = "uploads/videos/";
+    private static final String BASE_URL = "http://localhost:8080";
 
     @GetMapping
     public List<Video> listarTodos() {
@@ -28,7 +33,7 @@ public class VideoController {
 
     @GetMapping("/canal/{canalId}")
     public List<Video> listarPorCanal(@PathVariable String canalId) {
-        return videoService.listarPorCanal(canalId);
+        return videoService.getVideosByCanal(canalId);
     }
 
     @PostMapping(consumes = {"multipart/form-data"})
@@ -37,57 +42,84 @@ public class VideoController {
             @RequestParam("title") String title,
             @RequestParam(value = "desc", required = false) String desc,
             @RequestParam("canalId") String canalId,
-            @RequestParam("owner") String owner) throws IOException {
+            @RequestParam("owner") String owner,
+            @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail
+    ) throws IOException {
 
-        // 1️⃣ Define onde salvar os arquivos (cria pasta se não existir)
-        String uploadDir = "uploads/videos/";
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs();
+        // cria pasta se necessário
+        File directory = new File(UPLOAD_DIR);
+        if (!directory.exists() && !directory.mkdirs()) {
+            throw new IOException("Não foi possível criar diretório de upload: " + UPLOAD_DIR);
         }
 
-        // 2️⃣ Gera nome único para o arquivo
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path path = Paths.get(uploadDir + fileName);
+        // nome original limpo (sem espaços)
+        String originalName = file.getOriginalFilename() != null
+                ? file.getOriginalFilename().replaceAll("\\s+", "_")
+                : "uploaded_file";
 
-        // 3️⃣ Salva o arquivo no disco
-        Files.write(path, file.getBytes());
+        // verifica duplicidade pelo nome original
+        Video existente = videoService.buscarPorOriginalName(originalName);
+        if (existente != null) {
+            return existente; // retorna o registro existente sem criar duplicata
+        }
 
-        // 4️⃣ Cria o objeto Video e preenche os dados
+        // nome final salvo no disco (com timestamp para evitar sobrescrever)
+        String finalFileName = System.currentTimeMillis() + "_" + originalName;
+        Path filePath = Paths.get(UPLOAD_DIR, finalFileName);
+        Files.write(filePath, file.getBytes());
+
         Video video = new Video();
         video.setTitle(title);
         video.setDesc(desc);
         video.setCanalId(canalId);
         video.setOwner(owner);
-        video.setUrl("http://localhost:8080/uploads/videos/" + fileName);
-        video.setFileName(fileName);
+        video.setFileName(finalFileName);       // nome real do arquivo salvo no disco
+        video.setOriginalName(originalName);    // guarda o original pra dedupe
+        video.setUrl(BASE_URL + "/uploads/videos/" + finalFileName);
+        video.setCreatedAt(System.currentTimeMillis());
 
-        // 5️⃣ Salva no MongoDB
+        // thumbnail opcional (salva na mesma pasta)
+        if (thumbnail != null && !thumbnail.isEmpty()) {
+            String thumbOriginal = thumbnail.getOriginalFilename() != null
+                    ? thumbnail.getOriginalFilename().replaceAll("\\s+", "_")
+                    : "thumb";
+            String thumbName = System.currentTimeMillis() + "_thumb_" + thumbOriginal;
+            Path thumbPath = Paths.get(UPLOAD_DIR, thumbName);
+            Files.write(thumbPath, thumbnail.getBytes());
+            video.setThumbnail(BASE_URL + "/uploads/videos/" + thumbName);
+        }
+
         return videoService.criar(video);
     }
 
-     @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public void deletar(@PathVariable String id) {
-        // Buscar o vídeo antes de apagar
         Optional<Video> opt = videoService.buscarPorId(id);
         if (opt.isPresent()) {
             Video video = opt.get();
 
-            // Se o vídeo tiver um arquivo físico salvo, tenta deletar
+            // apaga arquivo do vídeo
             try {
-                if (video.getUrl() != null && video.getUrl().startsWith("/uploads/")) {
-                    String caminhoArquivo = System.getProperty("user.dir") + "/src/main/resources/static" + video.getUrl();
-                    File arquivo = new File(caminhoArquivo);
-                    if (arquivo.exists()) {
-                        arquivo.delete();
-                        System.out.println("🗑️ Arquivo deletado: " + caminhoArquivo);
-                    }
+                if (video.getFileName() != null) {
+                    Path p = Paths.get(UPLOAD_DIR, video.getFileName());
+                    Files.deleteIfExists(p);
                 }
             } catch (Exception e) {
-                System.err.println("⚠️ Erro ao excluir arquivo físico: " + e.getMessage());
+                System.err.println("Erro ao deletar arquivo de vídeo: " + e.getMessage());
             }
 
-            // Apaga o registro do banco
+            // apaga thumbnail
+            try {
+                if (video.getThumbnail() != null) {
+                    String thumbUrl = video.getThumbnail();
+                    String name = thumbUrl.contains("/") ? thumbUrl.substring(thumbUrl.lastIndexOf("/") + 1) : thumbUrl;
+                    Path tp = Paths.get(UPLOAD_DIR, name);
+                    Files.deleteIfExists(tp);
+                }
+            } catch (Exception e) {
+                System.err.println("Erro ao deletar thumb: " + e.getMessage());
+            }
+
             videoService.deletar(id);
         }
     }

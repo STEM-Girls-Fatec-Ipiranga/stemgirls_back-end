@@ -1,5 +1,7 @@
 package com.br.femmcode.femmcode;
 
+import java.nio.file.Paths;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -23,5 +25,12 @@ public class WebConfig implements WebMvcConfigurer {
             .addResourceHandler("/uploads/**")
             .addResourceLocations("file:uploads/")
             .setCachePeriod(0);
+        String absolutePath = Paths.get("uploads").toAbsolutePath().toUri().toString();
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations(absolutePath);
+
+                
+
+                
     }
 }

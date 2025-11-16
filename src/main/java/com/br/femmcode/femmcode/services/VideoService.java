@@ -2,6 +2,7 @@ package com.br.femmcode.femmcode.services;
 
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,12 +19,16 @@ public class VideoService {
         return videoRepository.findAll();
     }
 
-    public List<Video> listarPorCanal(String canalId) {
+    public List<Video> getVideosByCanal(String canalId) {
         return videoRepository.findByCanalId(canalId);
     }
 
     public Optional<Video> buscarPorId(String id) {
         return videoRepository.findById(id);
+    }
+
+    public Video buscarPorOriginalName(String originalName) {
+        return videoRepository.findByOriginalName(originalName);
     }
 
     public Video criar(Video video) {
@@ -33,8 +38,4 @@ public class VideoService {
     public void deletar(String id) {
         videoRepository.deleteById(id);
     }
-
 }
-
-
-

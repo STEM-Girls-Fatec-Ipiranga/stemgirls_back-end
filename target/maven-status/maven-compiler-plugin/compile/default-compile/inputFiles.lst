@@ -7,6 +7,7 @@ C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmco
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\controllers\CanalController.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\controllers\ComunidadeController.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\controllers\EmpresaController.java
+C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\controllers\EventoController.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\controllers\UsuarioController.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\controllers\VideoController.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\dtos\AtualizarComunidadeDTO.java
@@ -24,12 +25,15 @@ C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmco
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\models\Canal.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\models\Comunidade.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\models\Empresa.java
+C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\models\Evento.java
+C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\models\Inscricao.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\models\StatusEmpresa.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\models\Usuario.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\models\Video.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\repositories\CanalRepository.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\repositories\ComunidadeRepository.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\repositories\EmpresaRepository.java
+C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\repositories\EventoRepository.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\repositories\UsuarioRepository.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\repositories\VideoRepository.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\services\CanalService.java
@@ -38,6 +42,7 @@ C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmco
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\services\CustomUserDetailsService.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\services\EmailService.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\services\EmpresaService.java
+C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\services\EventoService.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\services\RecursoNaoEncontradoException.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\services\UsuarioService.java
 C:\Users\Kauane\Desktop\StemGirls\stemgirls_back-end\src\main\java\com\br\femmcode\femmcode\services\VideoService.java
