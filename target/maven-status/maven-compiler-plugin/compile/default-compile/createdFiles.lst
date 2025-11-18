@@ -4,7 +4,6 @@ com\br\femmcode\femmcode\models\Canal.class
 com\br\femmcode\femmcode\models\Evento.class
 com\br\femmcode\femmcode\WebConfig.class
 com\br\femmcode\femmcode\controllers\AuthController$ResetPasswordRequest.class
-com\br\femmcode\femmcode\controllers\EventoController$InscricaoDTO.class
 com\br\femmcode\femmcode\services\EmailService.class
 com\br\femmcode\femmcode\config\ManipuladorExcecoesGlobais.class
 com\br\femmcode\femmcode\controllers\EventoController.class
