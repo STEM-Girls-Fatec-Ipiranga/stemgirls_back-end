@@ -4,6 +4,7 @@ import com.br.femmcode.femmcode.config.JwtUtils;
 import com.br.femmcode.femmcode.dtos.JwtResponse;
 import com.br.femmcode.femmcode.dtos.LoginRequest;
 import com.br.femmcode.femmcode.dtos.SignUpRequestUsuario;
+import com.br.femmcode.femmcode.enuns.Role;
 import com.br.femmcode.femmcode.models.Empresa;
 import com.br.femmcode.femmcode.models.StatusEmpresa;
 import com.br.femmcode.femmcode.models.Usuario;
@@ -54,33 +55,60 @@ public class AuthController {
     }
 
     // --- LOGIN EMPRESA ---
-   @PostMapping("/login-empresa")
-public ResponseEntity<?> loginEmpresa(@RequestBody LoginRequest loginRequest) {
-    try {
-        Empresa empresa = empresaService.findByEmail(loginRequest.email());
+    @PostMapping("/login-empresa")
+    public ResponseEntity<?> loginEmpresa(@RequestBody LoginRequest loginRequest) {
+        try {
+            Empresa empresa = empresaService.findByEmail(loginRequest.email());
 
-        // Verifica senha
-        if (!empresaService.passwordMatches(loginRequest.senha(), empresa.getSenha())) {
-            return ResponseEntity.status(401).body("Erro: E-mail ou senha inválidos para empresa.");
+            // Verifica senha
+            if (!empresaService.passwordMatches(loginRequest.senha(), empresa.getSenha())) {
+                return ResponseEntity.status(401).body("Erro: E-mail ou senha inválidos para empresa.");
+            }
+
+            // Verifica status
+            if (empresa.getStatus() != StatusEmpresa.APROVADO) {
+                return ResponseEntity.status(403).body("Erro: Sua conta ainda está em análise ou foi reprovada.");
+            }
+
+            // Gera JWT
+            String jwt = jwtUtils.generateJwtTokenFromEmail(empresa.getEmail());
+
+            // Retorna resposta
+            return ResponseEntity.ok(new JwtResponse(jwt, empresa));
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body("Erro: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erro interno: " + e.getMessage());
         }
-
-        // Verifica status
-        if (empresa.getStatus() != StatusEmpresa.APROVADO) {
-            return ResponseEntity.status(403).body("Erro: Sua conta ainda está em análise ou foi reprovada.");
-        }
-
-        // Gera JWT
-        String jwt = jwtUtils.generateJwtTokenFromEmail(empresa.getEmail());
-
-        // Retorna resposta
-        return ResponseEntity.ok(new JwtResponse(jwt, empresa));
-
-    } catch (RuntimeException e) {
-        return ResponseEntity.status(401).body("Erro: " + e.getMessage());
-    } catch (Exception e) {
-        return ResponseEntity.status(500).body("Erro interno: " + e.getMessage());
     }
-}
+
+    //LOGIN MODERADOR
+    @PostMapping("/login-moderador")
+    public ResponseEntity<?> loginModerador(@RequestBody LoginRequest loginRequest) {
+        try {
+            Usuario mod = usuarioService.loadUserByEmail(loginRequest.email());
+
+            if (mod.getRole() != Role.MODERADOR) {
+                return ResponseEntity.status(403).body("Acesso negado: este usuário não é moderador.");
+            }
+
+            // autenticação via Spring Security
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.senha())
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            String jwt = jwtUtils.generateJwtToken(authentication);
+
+            return ResponseEntity.ok(new JwtResponse(jwt, mod));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Erro: E-mail ou senha inválidos para moderador.");
+        }
+    }
+
 
 
     // --- ESQUECI A SENHA (USUÁRIO) ---

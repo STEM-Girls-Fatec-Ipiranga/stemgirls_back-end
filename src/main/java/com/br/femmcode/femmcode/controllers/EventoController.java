@@ -40,8 +40,9 @@ public class EventoController {
         service.excluirEvento(id);
         return ResponseEntity.noContent().build();
     }
+
     @PutMapping("/{id}")
-public ResponseEntity<Evento> atualizar(
+        public ResponseEntity<Evento> atualizar(
         @PathVariable String id,
         @RequestBody Evento atualizado
 ) {
