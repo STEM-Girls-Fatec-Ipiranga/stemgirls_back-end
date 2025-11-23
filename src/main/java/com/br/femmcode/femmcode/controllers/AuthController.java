@@ -60,20 +60,16 @@ public class AuthController {
         try {
             Empresa empresa = empresaService.findByEmail(loginRequest.email());
 
-            // Verifica senha
             if (!empresaService.passwordMatches(loginRequest.senha(), empresa.getSenha())) {
                 return ResponseEntity.status(401).body("Erro: E-mail ou senha inválidos para empresa.");
             }
 
-            // Verifica status
             if (empresa.getStatus() != StatusEmpresa.APROVADO) {
                 return ResponseEntity.status(403).body("Erro: Sua conta ainda está em análise ou foi reprovada.");
             }
 
-            // Gera JWT
             String jwt = jwtUtils.generateJwtTokenFromEmail(empresa.getEmail());
 
-            // Retorna resposta
             return ResponseEntity.ok(new JwtResponse(jwt, empresa));
 
         } catch (RuntimeException e) {
@@ -93,7 +89,6 @@ public class AuthController {
                 return ResponseEntity.status(403).body("Acesso negado: este usuário não é moderador.");
             }
 
-            // autenticação via Spring Security
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.senha())
             );
@@ -108,8 +103,6 @@ public class AuthController {
             return ResponseEntity.status(401).body("Erro: E-mail ou senha inválidos para moderador.");
         }
     }
-
-
 
     // --- ESQUECI A SENHA (USUÁRIO) ---
     @PostMapping("/forgot-password")
@@ -133,6 +126,5 @@ public class AuthController {
         }
     }
 
-    // DTO para a requisição de redefinição de senha
     private record ResetPasswordRequest(String newPassword) {}
 }

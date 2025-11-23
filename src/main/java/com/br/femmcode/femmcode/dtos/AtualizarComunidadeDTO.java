@@ -1,7 +1,5 @@
 package com.br.femmcode.femmcode.dtos;
 
-//import javax.validation.constraints.Size;
-
 public class AtualizarComunidadeDTO {
     //@Size(min = 3, max = 80)
     private String nome;

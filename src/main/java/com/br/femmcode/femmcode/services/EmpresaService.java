@@ -3,8 +3,11 @@ package com.br.femmcode.femmcode.services;
 import com.br.femmcode.femmcode.dtos.EmpresaDTO;
 import com.br.femmcode.femmcode.enuns.Role;
 import com.br.femmcode.femmcode.models.Empresa;
+import com.br.femmcode.femmcode.models.Notificacao;
+import com.br.femmcode.femmcode.services.NotificacaoService;
 import com.br.femmcode.femmcode.models.StatusEmpresa;
 import com.br.femmcode.femmcode.repositories.EmpresaRepository;
+import com.br.femmcode.femmcode.repositories.NotificacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +25,9 @@ public class EmpresaService implements UserDetailsService {
     private EmpresaRepository empresaRepository;
 
     @Autowired
+    private NotificacaoService notificacaoService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -31,10 +37,9 @@ public class EmpresaService implements UserDetailsService {
         if (empresaRepository.existsByEmail(dto.email())) {
             throw new RuntimeException("Erro: E-mail já está em uso!");
         }
-       if (empresaRepository.existsByCnpj(dto.cnpj())) {
-        throw new RuntimeException("Erro: CNPJ já está cadastrado!");
-}
-
+        if (empresaRepository.existsByCnpj(dto.cnpj())) {
+             throw new RuntimeException("Erro: CNPJ já está cadastrado!");
+        }
 
         Empresa newEmpresa = new Empresa();
         newEmpresa.setNomeEmpresa(dto.nomeEmpresa());
@@ -44,11 +49,10 @@ public class EmpresaService implements UserDetailsService {
         newEmpresa.setTelefone(dto.telefone());
         newEmpresa.setStatus(StatusEmpresa.PENDENTE);
         newEmpresa.setRole(Role.EMPRESA);
-        
-
 
         Empresa saved = empresaRepository.save(newEmpresa);
         emailService.sendEmpresaApprovalEmail(saved);
+        notificacaoService.criarNotificacao(saved);
 
         return saved;
     }
@@ -56,13 +60,33 @@ public class EmpresaService implements UserDetailsService {
     public Empresa aprovarEmpresa(String email) {
         Empresa empresa = empresaRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
-        empresa.setStatus(StatusEmpresa.APROVADO);
-        Empresa empresaAprovada = empresaRepository.save(empresa);
 
-        emailService.sendEmpresaAprovadaEmail(empresaAprovada);
+        if(empresa.getStatus()!=StatusEmpresa.PENDENTE)
+            throw new RuntimeException("Empresa não está pendente");
+
+        empresa.setStatus(StatusEmpresa.APROVADO);
+
+        notificacaoService.deletarNotificacao(empresa.getId());
+        emailService.sendEmpresaAprovadaEmail(empresa);
 
         return empresaRepository.save(empresa);
     }
+
+    public Empresa reprovarEmpresa(String email) {
+        Empresa empresa = empresaRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+
+        if(empresa.getStatus()!=StatusEmpresa.PENDENTE)
+            throw new RuntimeException("Empresa não está pendente");
+
+        empresa.setStatus(StatusEmpresa.REPROVADO);
+
+        notificacaoService.deletarNotificacao(empresa.getId());
+        emailService.sendEmpresaReprovadaEmail(empresa);
+
+        return empresaRepository.save(empresa);
+    }
+
 
     public Empresa findByEmail(String email) {
         return empresaRepository.findByEmail(email)
@@ -79,19 +103,6 @@ public class EmpresaService implements UserDetailsService {
         }
 
         return new User(empresa.getEmail(), empresa.getSenha(), new ArrayList<>());
-    }
-
-    public Empresa reprovarEmpresa(String email) {
-        Empresa empresa = empresaRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
-
-        empresa.setStatus(StatusEmpresa.REPROVADO);
-
-        empresaRepository.delete(empresa);
-
-        emailService.sendEmpresaReprovadaEmail(empresa);
-
-        return empresa;
     }
 
     public boolean passwordMatches(String senha, String senha2) {

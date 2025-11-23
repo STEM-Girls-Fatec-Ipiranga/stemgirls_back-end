@@ -44,15 +44,23 @@ public class EmpresaController {
         return ResponseEntity.ok(empresa);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Empresa> getById(@PathVariable String id) {
+        Empresa empresa = empresaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+        return ResponseEntity.ok(empresa);
+    }
 
     @PutMapping("/{email}/aprovar")
-    public Empresa aprovar(@PathVariable String email) {
-        return empresaService.aprovarEmpresa(email);
+    public ResponseEntity<Empresa> aprovar(@PathVariable String email){
+        Empresa empresa = empresaService.aprovarEmpresa(email);
+        return new ResponseEntity<>(empresa, HttpStatus.OK);
     }
 
     @PutMapping("/{email}/reprovar")
-    public Empresa reprovar(@PathVariable String email) {
-        return empresaService.reprovarEmpresa(email);
+    public ResponseEntity<Empresa> reprovar(@PathVariable String email) {
+        Empresa empresa = empresaService.reprovarEmpresa(email);
+        return new ResponseEntity<>(empresa, HttpStatus.OK);
     }
 
     @PostMapping("/login")

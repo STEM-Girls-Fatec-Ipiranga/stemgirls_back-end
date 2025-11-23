@@ -14,59 +14,38 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    /*original*/
-    /*public void sendPasswordResetEmail(String to, String token) {
-        String resetLink = "http://localhost:5173/redefinir-senha/" + token;
+     public void sendPasswordResetEmail(Usuario usuario, String token) {
+        try {
+            String frontendUrl = "http://localhost:5173"; // coloque seu domínio aqui
+            String linkRedefinicao = frontendUrl + "/redefinir-senha/" + token;
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("femmcode4@gmail.com"); // Pode ser qualquer e-mail
-        message.setTo(to);
-        message.setSubject("STEM Grils - Redefinição de Senha");
-        message.setText(
-                "Olá,\n\n" +
-                        "Você solicitou a redefinição da sua senha. Por favor, clique no link abaixo para criar uma nova senha. Este link é válido por 1 hora.\n\n" +
-                        resetLink +
-                        "\n\nSe você não solicitou isso, por favor, ignore este e-mail.\n\n" +
-                        "Atenciosamente,\nEquipe STEM Grils"
-        );
+            String assunto = "Redefinição de Senha - StemGirls 💜";
 
-        mailSender.send(message);
-    }*/
+            String mensagemHtml =
+                    "<p>Olá, <strong>" + usuario.getNomeCompleto() + "</strong>!</p>" +
+                    "<p>Recebemos uma solicitação para redefinir sua senha.</p>" +
+                    "<p>Clique no botão abaixo para criar uma nova senha:</p>" +
+                    "<p><a href=\"" + linkRedefinicao + "\" " +
+                    "style=\"display:inline-block;padding:10px 18px;background:#8a2be2;color:white;text-decoration:none;border-radius:8px;\">" +
+                    "Redefinir Senha</a></p>" +
+                    "<p>Se você não solicitou isso, apenas ignore este e-mail.</p>" +
+                    "<p>Com carinho,<br>Equipe StemGirls 💫</p>";
 
- public void sendPasswordResetEmail(Usuario usuario, String token) {
-    try {
-        String frontendUrl = "http://localhost:5173"; // coloque seu domínio aqui
-        String linkRedefinicao = frontendUrl + "/redefinir-senha/" + token;
+            // Criar e-mail HTML
+            jakarta.mail.internet.MimeMessage email = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(email, true);
 
-        String assunto = "Redefinição de Senha - StemGirls 💜";
+            helper.setTo(usuario.getEmail());
+            helper.setSubject(assunto);
+            helper.setText(mensagemHtml, true); // <- true ATIVA HTML
 
-        String mensagemHtml =
-                "<p>Olá, <strong>" + usuario.getNomeCompleto() + "</strong>!</p>" +
-                "<p>Recebemos uma solicitação para redefinir sua senha.</p>" +
-                "<p>Clique no botão abaixo para criar uma nova senha:</p>" +
-                "<p><a href=\"" + linkRedefinicao + "\" " +
-                "style=\"display:inline-block;padding:10px 18px;background:#8a2be2;color:white;text-decoration:none;border-radius:8px;\">" +
-                "Redefinir Senha</a></p>" +
-                "<p>Se você não solicitou isso, apenas ignore este e-mail.</p>" +
-                "<p>Com carinho,<br>Equipe StemGirls 💫</p>";
+            mailSender.send(email);
 
-        // Criar e-mail HTML
-        jakarta.mail.internet.MimeMessage email = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(email, true);
-
-        helper.setTo(usuario.getEmail());
-        helper.setSubject(assunto);
-        helper.setText(mensagemHtml, true); // <- true ATIVA HTML
-
-        mailSender.send(email);
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw new RuntimeException("Erro ao enviar e-mail de redefinição");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao enviar e-mail de redefinição");
+        }
     }
-}
-
-    
 
     public void sendEmpresaApprovalEmail(Empresa empresa) {
         SimpleMailMessage message = new SimpleMailMessage();
