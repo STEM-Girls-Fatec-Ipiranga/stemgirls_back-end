@@ -4,9 +4,13 @@ import com.br.femmcode.femmcode.config.JwtUtils;
 import com.br.femmcode.femmcode.dtos.JwtResponse;
 import com.br.femmcode.femmcode.dtos.LoginRequest;
 import com.br.femmcode.femmcode.dtos.SignUpRequestUsuario;
+import com.br.femmcode.femmcode.dtos.UsuarioDTO;
+import com.br.femmcode.femmcode.models.Empresa;
 import com.br.femmcode.femmcode.models.Usuario;
 import com.br.femmcode.femmcode.services.UsuarioService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,39 +26,15 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
-    // --- CADASTRAR NOVO USUÁRIO ---
     @PostMapping("/criar")
-    public ResponseEntity<?> registrarUsuario(@RequestBody SignUpRequestUsuario dto) {
-        try {
-            Usuario novoUsuario = usuarioService.registrarUsuario(dto);
-            return ResponseEntity.ok("Usuário " + novoUsuario.getNomeCompleto() + " registrado com sucesso!");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Erro: " + e.getMessage());
-        }
+    public ResponseEntity<Usuario> criarUsuario(@RequestBody UsuarioDTO dto) {
+        Usuario usuario = usuarioService.criarUsuario(dto);
+        return new ResponseEntity<>(usuario, HttpStatus.OK);
     }
 
-    // --- LOGIN (opcional — caso queira manter login separado do AuthController) ---
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.senha())
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtUtils.generateJwtToken(authentication);
-
-            Usuario user = usuarioService.loadUserByEmail(loginRequest.email());
-            return ResponseEntity.ok(new JwtResponse(jwt, user));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body("Erro: E-mail ou senha inválidos.");
-        }
+    public ResponseEntity<Usuario> login(@RequestBody UsuarioDTO dto) {
+        Usuario user = usuarioService.login(dto.email(), dto.senha());
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

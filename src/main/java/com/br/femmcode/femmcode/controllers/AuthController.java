@@ -55,7 +55,7 @@ public class AuthController {
     }
 
     // --- LOGIN EMPRESA ---
-    @PostMapping("/login-empresa")
+    /*@PostMapping("/login-empresa")
     public ResponseEntity<?> loginEmpresa(@RequestBody LoginRequest loginRequest) {
         try {
             Empresa empresa = empresaService.findByEmail(loginRequest.email());
@@ -77,7 +77,7 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Erro interno: " + e.getMessage());
         }
-    }
+    }*/
 
     //LOGIN MODERADOR
     @PostMapping("/login-moderador")

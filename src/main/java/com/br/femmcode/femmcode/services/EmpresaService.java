@@ -50,19 +50,38 @@ public class EmpresaService implements UserDetailsService {
         newEmpresa.setStatus(StatusEmpresa.PENDENTE);
         newEmpresa.setRole(Role.EMPRESA);
 
-        Empresa saved = empresaRepository.save(newEmpresa);
-        emailService.sendEmpresaApprovalEmail(saved);
-        notificacaoService.criarNotificacao(saved);
+        Empresa empresa = empresaRepository.save(newEmpresa);
+        emailService.sendEmpresaApprovalEmail(empresa);
+        notificacaoService.criarNotificacao(empresa);
 
-        return saved;
+        return empresa;
+    }
+
+    public Empresa login(String email, String senha) {
+        Empresa empresa = empresaRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada!"));
+
+        if(!passwordEncoder.matches(senha, empresa.getSenha())){
+            throw new RuntimeException("Erro ao realizar login!");
+        }
+
+        if(empresa.getStatus()==StatusEmpresa.PENDENTE){
+            throw new RuntimeException("Empresa pendente. Ainda estamos analisando seus dados.");
+        }
+
+        if(empresa.getStatus()==StatusEmpresa.REPROVADO){
+            throw new RuntimeException("Infelizmente a sua empresa foi reprovada. Entre em contato conosco para mais detalhes.");
+        }
+
+        return empresa;
     }
 
     public Empresa aprovarEmpresa(String email) {
         Empresa empresa = empresaRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada!"));
 
         if(empresa.getStatus()!=StatusEmpresa.PENDENTE)
-            throw new RuntimeException("Empresa não está pendente");
+            throw new RuntimeException("Empresa não está mais pendente!");
 
         empresa.setStatus(StatusEmpresa.APROVADO);
 
@@ -74,10 +93,10 @@ public class EmpresaService implements UserDetailsService {
 
     public Empresa reprovarEmpresa(String email) {
         Empresa empresa = empresaRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada!"));
 
         if(empresa.getStatus()!=StatusEmpresa.PENDENTE)
-            throw new RuntimeException("Empresa não está pendente");
+            throw new RuntimeException("Empresa não está mais pendente!");
 
         empresa.setStatus(StatusEmpresa.REPROVADO);
 
@@ -87,10 +106,9 @@ public class EmpresaService implements UserDetailsService {
         return empresaRepository.save(empresa);
     }
 
-
-    public Empresa findByEmail(String email) {
-        return empresaRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+    public Empresa encontrarEmpresa(String id){
+        return empresaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada!"));
     }
 
     @Override
@@ -104,11 +122,4 @@ public class EmpresaService implements UserDetailsService {
 
         return new User(empresa.getEmail(), empresa.getSenha(), new ArrayList<>());
     }
-
-    public boolean passwordMatches(String senha, String senha2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'passwordMatches'");
-    }
-    
-
 }

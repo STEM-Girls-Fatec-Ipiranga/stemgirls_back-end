@@ -12,6 +12,5 @@ import java.util.Optional;
 public interface EmpresaRepository extends MongoRepository<Empresa, String> {
     Optional<Empresa> findByEmail(String email);
     boolean existsByEmail(String email);
-    boolean existsBySenha(String senha);
     boolean existsByCnpj(String cnpj);
 }

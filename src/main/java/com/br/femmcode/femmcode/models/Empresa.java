@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 public class Empresa {
 
     @Id
-    private String empresaId;
+    private String id;
 
     private String nomeEmpresa;
     private String cnpj;
@@ -28,11 +28,11 @@ public class Empresa {
     private StatusEmpresa status = StatusEmpresa.PENDENTE;
 
     public String getId() {
-        return empresaId;
+        return id;
     }
 
-    public void setEmpresaId(String EmpresaId) {
-        this.empresaId = empresaId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNomeEmpresa() {

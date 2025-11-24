@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/empresa")
@@ -32,23 +33,22 @@ public class EmpresaController {
     @Autowired
     private EmpresaRepository empresaRepository;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
     @PostMapping("/criar")
     public ResponseEntity<Empresa> criarEmpresa(@RequestBody EmpresaDTO empresaDTO) {
         Empresa empresa = empresaService.criarEmpresa(empresaDTO);
         return ResponseEntity.ok(empresa);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<Empresa> login(@RequestBody EmpresaDTO dto) {
+        Empresa empresa = empresaService.login(dto.email(), dto.senha());
+        return new ResponseEntity<>(empresa, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Empresa> getById(@PathVariable String id) {
-        Empresa empresa = empresaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
-        return ResponseEntity.ok(empresa);
+    public ResponseEntity<Empresa> encontrarEmpresa(@PathVariable String id) {
+        Empresa empresa = empresaService.encontrarEmpresa(id);
+        return new ResponseEntity<>(empresa, HttpStatus.OK);
     }
 
     @PutMapping("/{email}/aprovar")
@@ -61,34 +61,5 @@ public class EmpresaController {
     public ResponseEntity<Empresa> reprovar(@PathVariable String email) {
         Empresa empresa = empresaService.reprovarEmpresa(email);
         return new ResponseEntity<>(empresa, HttpStatus.OK);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest dto) {
-        try {
-
-            var authToken = new UsernamePasswordAuthenticationToken(dto.email(), dto.senha());
-            var auth = authenticationManager.authenticate(authToken);
-
-
-            var empresa = empresaRepository.findByEmail(dto.email())
-                    .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
-
-
-            if (empresa.getStatus() != StatusEmpresa.APROVADO) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("A sua conta ainda está em análise. Aguarde aprovação.");
-            }
-
-            var token = jwtUtils.generateJwtToken(auth);
-
-            return ResponseEntity.ok(Map.of(
-                    "token", token,
-                    "empresa", empresa.getNomeEmpresa()
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("E-mail ou senha incorretos.");
-        }
     }
 }
