@@ -26,15 +26,13 @@ public class JwtUtils {
         Object principal = authentication.getPrincipal();
         String email;
 
-        // Captura o e-mail dependendo do tipo de usuário
         if (principal instanceof Usuario usuario) {
             email = usuario.getEmail();
         } else if (principal instanceof Empresa empresa) {
             email = empresa.getEmail();
         } else {
-            email = authentication.getName(); // fallback de segurança
+            email = authentication.getName();
         }
-        
 
         return Jwts.builder()
                 .setSubject(email)

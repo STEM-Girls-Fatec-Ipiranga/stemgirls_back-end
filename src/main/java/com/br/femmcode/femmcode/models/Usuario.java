@@ -19,6 +19,9 @@ public class Usuario {
     private String email;
     private String senha;
 
+    private String sobre;
+    private String linkImagemPerfil;
+
     private String passwordResetToken;
     private LocalDateTime passwordResetTokenExpiryDate;
 
@@ -67,6 +70,22 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getSobre() {
+        return sobre;
+    }
+
+    public void setSobre(String sobre) {
+        this.sobre = sobre;
+    }
+
+    public String getLinkImagemPerfil() {
+        return linkImagemPerfil;
+    }
+
+    public void setLinkImagemPerfil(String linkImagemPerfil) {
+        this.linkImagemPerfil = linkImagemPerfil;
     }
 
     public String getPasswordResetToken() {

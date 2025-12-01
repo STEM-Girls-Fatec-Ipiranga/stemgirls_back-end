@@ -43,7 +43,7 @@ public class EmailService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Erro ao enviar e-mail de redefinição");
+            throw new RuntimeException("Erro ao enviar e-mail de redefinição.");
         }
     }
 

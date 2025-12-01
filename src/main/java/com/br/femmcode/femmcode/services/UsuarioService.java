@@ -1,6 +1,5 @@
 package com.br.femmcode.femmcode.services;
 
-import com.br.femmcode.femmcode.dtos.SignUpRequestUsuario;
 import com.br.femmcode.femmcode.dtos.UsuarioDTO;
 import com.br.femmcode.femmcode.enuns.Role;
 import com.br.femmcode.femmcode.models.Usuario;
@@ -15,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.UUID;
 
 @Primary
@@ -44,6 +42,20 @@ public class UsuarioService implements UserDetailsService {
         novoUsuario.setRole(Role.USUARIO);
 
         return usuarioRepository.save(novoUsuario);
+    }
+
+    public Usuario atualizarUsuario(UsuarioDTO dto){
+        if (!usuarioRepository.existsByEmail(dto.email())) {
+            throw new RuntimeException("Usuário não existe!");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setNomeCompleto(dto.nomeCompleto());
+        usuario.setNomeUsuario(dto.nomeUsuario());
+        usuario.setSobre(dto.sobre());
+        usuario.setLinkImagemPerfil(dto.linkImagemPerfil());
+
+        return usuarioRepository.save(usuario);
     }
 
     public Usuario login(String email, String senha){
@@ -76,18 +88,14 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public void processForgotPassword(String email) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
-        if (usuarioOpt.isEmpty()) {
-            throw new RuntimeException("E-mail não encontrado.");
-        }
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + email));
 
-        Usuario usuario = usuarioOpt.get();
         String token = UUID.randomUUID().toString();
 
         usuario.setPasswordResetToken(token);
         usuarioRepository.save(usuario);
 
-        // envia o e-mail com link de redefinição
         emailService.sendPasswordResetEmail(usuario, token);
     }
 
@@ -96,7 +104,7 @@ public class UsuarioService implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException("Token inválido ou expirado."));
 
         usuario.setSenha(passwordEncoder.encode(novaSenha));
-        usuario.setPasswordResetToken(null); // limpa o token após redefinir
+        usuario.setPasswordResetToken(null);
         usuarioRepository.save(usuario);
     }
 }

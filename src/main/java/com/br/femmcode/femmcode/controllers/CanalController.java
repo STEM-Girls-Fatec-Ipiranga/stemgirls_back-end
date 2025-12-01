@@ -23,13 +23,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/canais")
+@RequestMapping("/canais")
 @CrossOrigin(originPatterns = {"http://localhost:5173", "http://localhost:3000"})
 @RequiredArgsConstructor
 public class CanalController {
+    @Autowired
+    private CanalService canalService;
 
-    private final CanalService canalService;
-    private final VideoRepository videoRepository;
+    @Autowired
+    private VideoRepository videoRepository;
 
     private static final String UPLOAD_DIR = "uploads/canais/";
 
@@ -43,41 +45,41 @@ public class CanalController {
         return canalService.buscarPorId(id);
     }
 
-    // ✅ Aceita multipart para upload de imagens
-   @PostMapping(consumes = {"multipart/form-data"})
-public Canal criar(
+
+    @PostMapping(consumes = {"multipart/form-data"})
+
+    public Canal criar(
         @RequestParam("nome") String nome,
         @RequestParam("descricao") String descricao,
         @RequestParam(value = "banner", required = false) MultipartFile banner,
         @RequestParam(value = "fotoPerfil", required = false) MultipartFile fotoPerfil,
         @RequestParam("owner") String owner) throws IOException {
 
-    String uploadDir = "uploads/canais/";
-    File directory = new File(uploadDir);
-    if (!directory.exists()) directory.mkdirs();
+        String uploadDir = "uploads/canais/";
+        File directory = new File(uploadDir);
+        if (!directory.exists()) directory.mkdirs();
 
-    Canal canal = new Canal();
-    canal.setNome(nome);
-    canal.setDescricao(descricao);
-    canal.setOwner(owner);
+        Canal canal = new Canal();
+        canal.setNome(nome);
+        canal.setDescricao(descricao);
+        canal.setOwner(owner);
 
-    if (banner != null && !banner.isEmpty()) {
-        String bannerName = java.util.UUID.randomUUID() + "_" + banner.getOriginalFilename();
-        Path bannerPath = Paths.get(uploadDir + bannerName);
-        Files.write(bannerPath, banner.getBytes());
-        canal.setBanner("http://localhost:8080/uploads/canais/" + bannerName);
+        if (banner != null && !banner.isEmpty()) {
+            String bannerName = java.util.UUID.randomUUID() + "_" + banner.getOriginalFilename();
+            Path bannerPath = Paths.get(uploadDir + bannerName);
+            Files.write(bannerPath, banner.getBytes());
+            canal.setBanner("http://localhost:8080/uploads/canais/" + bannerName);
+        }
+
+        if (fotoPerfil != null && !fotoPerfil.isEmpty()) {
+            String fotoName = java.util.UUID.randomUUID() + "_" + fotoPerfil.getOriginalFilename();
+            Path fotoPath = Paths.get(uploadDir + fotoName);
+            Files.write(fotoPath, fotoPerfil.getBytes());
+            canal.setFotoPerfil("http://localhost:8080/uploads/canais/" + fotoName);
+        }
+
+        return canalService.criar(canal);
     }
-
-    if (fotoPerfil != null && !fotoPerfil.isEmpty()) {
-        String fotoName = java.util.UUID.randomUUID() + "_" + fotoPerfil.getOriginalFilename();
-        Path fotoPath = Paths.get(uploadDir + fotoName);
-        Files.write(fotoPath, fotoPerfil.getBytes());
-        canal.setFotoPerfil("http://localhost:8080/uploads/canais/" + fotoName);
-    }
-
-    return canalService.criar(canal);
-}
-
 
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable String id) {

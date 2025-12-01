@@ -35,10 +35,10 @@ public class EmpresaService implements UserDetailsService {
 
     public Empresa criarEmpresa(EmpresaDTO dto) {
         if (empresaRepository.existsByEmail(dto.email())) {
-            throw new RuntimeException("Erro: E-mail já está em uso!");
+            throw new RuntimeException("E-mail já está em uso!");
         }
         if (empresaRepository.existsByCnpj(dto.cnpj())) {
-             throw new RuntimeException("Erro: CNPJ já está cadastrado!");
+             throw new RuntimeException("CNPJ já está cadastrado!");
         }
 
         Empresa newEmpresa = new Empresa();

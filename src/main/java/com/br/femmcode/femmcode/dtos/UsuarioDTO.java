@@ -21,6 +21,10 @@ public record UsuarioDTO (
         @NotBlank(message = "A senha é obrigatória")
         String senha,
 
+        String sobre,
+
+        String linkImagemPerfil,
+
         String passwordResetToken,
         LocalDateTime passwordResetTokenExpiryDate,
 

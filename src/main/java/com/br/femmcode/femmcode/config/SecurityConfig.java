@@ -23,33 +23,21 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    // Criação do PasswordEncoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Filtro de autenticação JWT
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
 
-    // AuthenticationManager padrão
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // DaoAuthenticationProvider usando o EmpresaService
-    /*@Bean
-    public DaoAuthenticationProvider authenticationProvider(EmpresaService empresaService, PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(empresaService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return authProvider;
-    }*/
     @Bean
     public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService customUserDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -58,8 +46,6 @@ public class SecurityConfig {
         return authProvider;
     }
 
-
-    // Configuração de CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -73,7 +59,6 @@ public class SecurityConfig {
         return source;
     }
 
-    // Configuração de segurança
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider) throws Exception {
         http

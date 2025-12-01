@@ -19,10 +19,10 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        criarModerador("talitinhacosta246@gmail.com", "pWsyam1290*", "Talita Vitória", "Talitao");
-        criarModerador("martinskauane084@gmail.com", "@Kauane123", "Kauane Martins", "Causone");
-        criarModerador("anaclarafontinelescosta@gmail.com", "Anaclara21#", "Ana Clara", "Ana Escura");
-        criarModerador("leticiaribeiros213@gmail.com", "#Cabecadevento213", "Lethicia Ribeiro", "Lechicia");
+        criarModerador("talitinhacosta246@gmail.com", "pWsyam1290*", "Talita Vitória", "Talita V.");
+        criarModerador("martinskauane084@gmail.com", "@Kauane123", "Kauane Martins", "Kauane M.");
+        criarModerador("anaclarafontinelescosta@gmail.com", "Anaclara21#_", "Ana Clara", "Ana Clara");
+        criarModerador("leticiaribeiros213@gmail.com", "#Cabecadevento213", "Lethicia Ribeiro", "Lethicia R.");
     }
 
     private void criarModerador(String email, String senha, String nomeCompleto, String nomeUsuario) {

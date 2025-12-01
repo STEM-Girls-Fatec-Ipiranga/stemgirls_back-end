@@ -1,22 +1,17 @@
 package com.br.femmcode.femmcode.controllers;
 
-import com.br.femmcode.femmcode.config.JwtUtils;
-import com.br.femmcode.femmcode.dtos.JwtResponse;
-import com.br.femmcode.femmcode.dtos.LoginRequest;
-import com.br.femmcode.femmcode.dtos.SignUpRequestUsuario;
 import com.br.femmcode.femmcode.dtos.UsuarioDTO;
-import com.br.femmcode.femmcode.models.Empresa;
 import com.br.femmcode.femmcode.models.Usuario;
+import com.br.femmcode.femmcode.services.CloudinaryService;
 import com.br.femmcode.femmcode.services.UsuarioService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/usuario")
@@ -26,9 +21,18 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     @PostMapping("/criar")
     public ResponseEntity<Usuario> criarUsuario(@RequestBody UsuarioDTO dto) {
         Usuario usuario = usuarioService.criarUsuario(dto);
+        return new ResponseEntity<>(usuario, HttpStatus.OK);
+    }
+
+    @PutMapping("/atualizar")
+    public ResponseEntity<Usuario> atualizarUsuario(@RequestBody UsuarioDTO dto){
+        Usuario usuario = usuarioService.atualizarUsuario(dto);
         return new ResponseEntity<>(usuario, HttpStatus.OK);
     }
 
@@ -36,5 +40,15 @@ public class UsuarioController {
     public ResponseEntity<Usuario> login(@RequestBody UsuarioDTO dto) {
         Usuario user = usuarioService.login(dto.email(), dto.senha());
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) {
+        try {
+            String result = cloudinaryService.uploadFile(file);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro no upload: " + e.getMessage());
+        }
     }
 }

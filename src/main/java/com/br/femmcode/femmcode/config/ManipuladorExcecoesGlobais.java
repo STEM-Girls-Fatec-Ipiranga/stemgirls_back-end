@@ -4,6 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.br.femmcode.femmcode.services.RecursoNaoEncontradoException;
+
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Map;
 
@@ -30,7 +32,15 @@ public class ManipuladorExcecoesGlobais {
     public ResponseEntity<?> tratarGeral(Exception ex) {
         return ResponseEntity.status(500).body(Map.of(
                 "timestamp", Instant.now(),
-                "mensagem", "Erro interno: " + ex.getMessage()
+                "mensagem", ex.getMessage()
+        ));
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<?> tratarUploadImage(Exception ex) {
+        return ResponseEntity.status(500).body(Map.of(
+                "timestamp", Instant.now(),
+                "mensagem", ex.getMessage()
         ));
     }
 }
