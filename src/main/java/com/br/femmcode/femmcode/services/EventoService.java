@@ -124,7 +124,7 @@ public class EventoService {
     public Optional<Evento> atualizarEvento(String id, Evento novo) {
     return repo.findById(id).map(existente -> {
 
-        existente.setEmpresa(novo.getEmpresa());
+        existente.setOrganizadorTipo(novo.getOrganizadorTipo());
         existente.setTitulo(novo.getTitulo());
         existente.setData(novo.getData());
         existente.setHora(novo.getHora());
@@ -132,7 +132,7 @@ public class EventoService {
         existente.setLocal(novo.getLocal());
         existente.setDescricao(novo.getDescricao());
         existente.setImagem(novo.getImagem());
-        existente.setLink(novo.getLink());
+        existente.setLinkInscricao(novo.getLinkInscricao());
         existente.setEnderecoCompleto(novo.getEnderecoCompleto());
 
         return repo.save(existente);

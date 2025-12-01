@@ -14,7 +14,7 @@ public class Evento {
     @Id
     private String id;
 
-    private String empresa;
+    private String organizadorTipo;
     private String titulo;
     private String data;
     private String hora;
@@ -22,7 +22,7 @@ public class Evento {
     private String local;
     private String descricao;
     private String imagem;
-    private String link;
+    private String linkInscricao;
     private String enderecoCompleto;
 
     // TIPADO CORRETAMENTE
