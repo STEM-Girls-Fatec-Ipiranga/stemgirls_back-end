@@ -45,13 +45,9 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public Usuario atualizarUsuario(UsuarioDTO dto){
-        if (!usuarioRepository.existsByEmail(dto.email())) {
-            throw new RuntimeException("Usuário não existe!");
-        }
+        Usuario usuario = usuarioRepository.findByEmail(dto.email())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não existe!"));
 
-        Usuario usuario = new Usuario();
-        usuario.setNomeCompleto(dto.nomeCompleto());
-        usuario.setNomeUsuario(dto.nomeUsuario());
         usuario.setSobre(dto.sobre());
         usuario.setLinkImagemPerfil(dto.linkImagemPerfil());
 
