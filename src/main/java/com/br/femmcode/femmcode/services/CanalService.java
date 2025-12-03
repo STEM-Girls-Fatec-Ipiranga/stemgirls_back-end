@@ -8,13 +8,16 @@ import org.springframework.stereotype.Service;
 import com.br.femmcode.femmcode.models.Canal;
 import com.br.femmcode.femmcode.repositories.CanalRepository;
 
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class CanalService {
 
     private final CanalRepository canalRepository;
+
+    public CanalService(CanalRepository canalRepository) {
+        this.canalRepository = canalRepository;
+    }
+
 
     public List<Canal> listarTodos() {
         return canalRepository.findAll();
