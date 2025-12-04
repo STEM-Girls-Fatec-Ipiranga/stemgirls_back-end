@@ -3,7 +3,6 @@ com\br\femmcode\femmcode\repositories\EmpresaRepository.class
 com\br\femmcode\femmcode\models\Canal.class
 com\br\femmcode\femmcode\models\Evento.class
 com\br\femmcode\femmcode\WebConfig.class
-com\br\femmcode\femmcode\controllers\AuthController$ResetPasswordRequest.class
 com\br\femmcode\femmcode\services\EmailService.class
 com\br\femmcode\femmcode\config\ManipuladorExcecoesGlobais.class
 com\br\femmcode\femmcode\controllers\EventoController.class
@@ -29,8 +28,6 @@ com\br\femmcode\femmcode\controllers\EmpresaController.class
 com\br\femmcode\femmcode\models\StatusEmpresa.class
 com\br\femmcode\femmcode\models\Comunidade.class
 com\br\femmcode\femmcode\models\Video.class
-com\br\femmcode\femmcode\dtos\SignUpRequestUsuario.class
-com\br\femmcode\femmcode\dtos\LoginRequest.class
 com\br\femmcode\femmcode\config\MongoConfig.class
 com\br\femmcode\femmcode\services\VideoService.class
 com\br\femmcode\femmcode\dtos\CriarComunidadeDTO.class
@@ -47,4 +44,3 @@ com\br\femmcode\femmcode\dtos\ComunidadeRespostaDTO.class
 com\br\femmcode\femmcode\controllers\AuthController.class
 com\br\femmcode\femmcode\dtos\CanalDTO.class
 com\br\femmcode\femmcode\config\JwtUtils.class
-com\br\femmcode\femmcode\dtos\SignUpRequestEmpresa.class

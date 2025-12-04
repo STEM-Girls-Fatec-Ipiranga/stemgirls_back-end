@@ -57,11 +57,7 @@ public class VideoController {
                 ? file.getOriginalFilename().replaceAll("\\s+", "_")
                 : "uploaded_file";
 
-        // verifica duplicidade pelo nome original
-        Video existente = videoService.buscarPorOriginalName(originalName);
-        if (existente != null) {
-            return existente; // retorna o registro existente sem criar duplicata
-        }
+        
 
         // nome final salvo no disco (com timestamp para evitar sobrescrever)
         String finalFileName = System.currentTimeMillis() + "_" + originalName;
