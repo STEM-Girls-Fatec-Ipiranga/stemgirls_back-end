@@ -5,6 +5,7 @@ Projeto desenvolvido com o objetivo de incentivar meninas e mulheres a ingressar
 - Java 
 - JDK 17  
 - Spring Boot 3.4.5
+- JavaScript
 - React 19.0.0  
 - Tailwind CSS 4.1.13  
 - MongoDB 8.0  
