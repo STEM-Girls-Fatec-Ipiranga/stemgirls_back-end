@@ -2,9 +2,10 @@
 Projeto desenvolvido com o objetivo de incentivar meninas e mulheres a ingressarem e permanecerem na área de tecnologia através de uma plataforma interativa com conteúdos, atividades e funcionalidades sociais.
 
 # Tecnologias utilizadas
+- Node.js
 - Java 
-- JDK 17  
-- Spring Boot 3.4.5
+- JDK 17.0.9 
+- Spring Boot 3.5.12
 - JavaScript
 - React 19.0.0  
 - Tailwind CSS 4.1.13  
