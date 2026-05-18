@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Primary
 @Service("usuarioService")
@@ -35,7 +36,8 @@ public class UsuarioService implements UserDetailsService {
         }
 
         Usuario novoUsuario = new Usuario();
-        novoUsuario.setNomeCompleto(dto.nomeCompleto());
+
+        novoUsuario.setNome(dto.nome());
         novoUsuario.setNomeUsuario(dto.nomeUsuario());
         novoUsuario.setEmail(dto.email());
         novoUsuario.setSenha(passwordEncoder.encode(dto.senha()));
@@ -48,10 +50,18 @@ public class UsuarioService implements UserDetailsService {
         Usuario usuario = usuarioRepository.findByEmail(dto.email())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não existe!"));
 
-        usuario.setSobre(dto.sobre());
-        usuario.setLinkImagemPerfil(dto.linkImagemPerfil());
+        updateIfNotNull(dto.sobre(), usuario::setSobre);
+        updateIfNotNull(dto.linkImagemPerfil(), usuario::setLinkImagemPerfil);
+        updateIfNotNull(dto.cpf(), usuario::setCpf);
+        updateIfNotNull(dto.telefone(), usuario::setTelefone);
 
         return usuarioRepository.save(usuario);
+    }
+
+    private <T> void updateIfNotNull(T value, Consumer<T> setter){
+        if(value != null){
+            setter.accept(value);
+        }
     }
 
     public Usuario login(String email, String senha){

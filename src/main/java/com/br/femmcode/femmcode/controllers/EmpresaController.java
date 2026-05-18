@@ -18,15 +18,15 @@ public class EmpresaController {
     private EmpresaService empresaService;
 
     @PostMapping("/criar")
-    public ResponseEntity<Empresa> criarEmpresa(@RequestBody EmpresaDTO empresaDTO) {
-        Empresa empresa = empresaService.criarEmpresa(empresaDTO);
+    public ResponseEntity<Empresa> criarEmpresa(@RequestBody EmpresaDTO dto) {
+        Empresa empresa = empresaService.criarEmpresa(dto);
         return ResponseEntity.ok(empresa);
     }
 
     @PostMapping("/login")
     public ResponseEntity<Empresa> login(@RequestBody EmpresaDTO dto) {
         Empresa empresa = empresaService.login(dto.email(), dto.senha());
-        return new ResponseEntity<>(empresa, HttpStatus.OK);
+        return ResponseEntity.ok(empresa);
     }
 
     @GetMapping("/{id}")

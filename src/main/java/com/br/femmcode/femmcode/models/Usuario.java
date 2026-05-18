@@ -7,17 +7,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Document(collection = "usuarios")
-@Data // Anotação do Lombok que cria getters, setters, construtores, etc.
+@Data
 public class Usuario {
     
     @Id
     private String id;
 
-    private String nomeCompleto;
+    private String nome;
     private String nomeUsuario;
 
     private String email;
     private String senha;
+    private String telefone;
+    private String cpf;
 
     private String sobre;
     private String linkImagemPerfil;
@@ -25,12 +27,8 @@ public class Usuario {
     private String passwordResetToken;
     private LocalDateTime passwordResetTokenExpiryDate;
 
-    private LocalDateTime joinDate;
-
     private Role role;
-
-    // A anotação @Data do Lombok cuida de todos os getters e setters.
-    // Não precisamos mais escrevê-los manualmente.
+    private final LocalDateTime dataEntrada = LocalDateTime.now();
 
     public String getId() {
         return id;
@@ -40,12 +38,12 @@ public class Usuario {
         this.id = id;
     }
 
-    public String getNomeCompleto() {
-        return nomeCompleto;
+    public String getNome() {
+        return nome;
     }
 
-    public void setNomeCompleto(String nomeCompleto) {
-        this.nomeCompleto = nomeCompleto;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getNomeUsuario() {
@@ -70,6 +68,22 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getSobre() {
@@ -110,5 +124,9 @@ public class Usuario {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public LocalDateTime getDataEntrada() {
+        return dataEntrada;
     }
 }

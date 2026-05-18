@@ -22,7 +22,7 @@ public class EmailService {
             String assunto = "Redefinição de Senha - StemGirls 💜";
 
             String mensagemHtml =
-                    "<p>Olá, <strong>" + usuario.getNomeCompleto() + "</strong>!</p>" +
+                    "<p>Olá, <strong>" + usuario.getNome() + "</strong>!</p>" +
                     "<p>Recebemos uma solicitação para redefinir sua senha.</p>" +
                     "<p>Clique no botão abaixo para criar uma nova senha:</p>" +
                     "<p><a href=\"" + linkRedefinicao + "\" " +
@@ -54,7 +54,7 @@ public class EmailService {
         message.setSubject("STEM Girls - Nova empresa aguardando aprovação");
         message.setText(
                 "Uma nova empresa se cadastrou e aguarda sua aprovação:\n\n" +
-                        "Nome Empresa: " + empresa.getNomeEmpresa() + "\n" +
+                        "Nome Empresa: " + empresa.getNome() + "\n" +
                         "CNPJ: " + empresa.getCnpj() + "\n" +
                         "E-mail: " + empresa.getEmail() + "\n" +
                         "Telefone: " + empresa.getTelefone() + "\n" +
@@ -71,7 +71,7 @@ public class EmailService {
                         "Infelizmente sua solicitação de cadastro na plataforma Stem Girls foi reprovada. " +
                         "Caso deseje revisar seus dados e tentar novamente, entre em contato com nossa equipe.\n\n" +
                         "Atenciosamente,\nEquipe STEM Girls 💜",
-                empresa.getNomeEmpresa()
+                empresa.getNome()
         );
 
         SimpleMailMessage email = new SimpleMailMessage();
@@ -91,7 +91,7 @@ public class EmailService {
                         "Acesse: http://localhost:5173/login\n\n" +
                         "Bem-vinda à nossa comunidade!\n\n" +
                         "Com carinho,\nEquipe STEM Girls 💫",
-                empresa.getNomeEmpresa()
+                empresa.getNome()
         );
 
         SimpleMailMessage email = new SimpleMailMessage();

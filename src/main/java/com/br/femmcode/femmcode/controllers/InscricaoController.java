@@ -1,78 +1,46 @@
 package com.br.femmcode.femmcode.controllers;
 
 import com.br.femmcode.femmcode.dtos.InscricaoDTO;
+import com.br.femmcode.femmcode.models.Empresa;
+import com.br.femmcode.femmcode.models.Evento;
 import com.br.femmcode.femmcode.models.Inscricao;
+import com.br.femmcode.femmcode.models.Usuario;
+import com.br.femmcode.femmcode.services.EventoService;
 import com.br.femmcode.femmcode.services.InscricaoService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/inscricoes")
-@CrossOrigin(
-    originPatterns = "*",
-    allowedHeaders = "*",
-    allowCredentials = "true"
-)
+@RequestMapping("/inscricao")
+@CrossOrigin(origins = "http://localhost:5174")
 public class InscricaoController {
+    @Autowired
+    private InscricaoService inscricaoService;
 
-    private final InscricaoService service;
-
-    public InscricaoController(InscricaoService service) {
-        this.service = service;
+    @GetMapping("/{participanteId}")
+    public ResponseEntity<List<Inscricao>> buscarPorParticipante(@PathVariable String participanteId){
+        Optional<List<Inscricao>> inscricao = inscricaoService.buscarPorParticipante(participanteId);
+        return inscricao.map(ResponseEntity::ok).orElse(null);
     }
 
-    @PostMapping
-    public Inscricao criar(@RequestBody InscricaoDTO dto) {
-        return service.criarInscricao(dto);
+    @GetMapping("/{participanteId}/{eventoId}")
+    public ResponseEntity<Inscricao> encontrarInscricao(@PathVariable String participanteId, @PathVariable String eventoId){
+        Optional<Inscricao> inscricao = inscricaoService.encontrarInscricao(participanteId, eventoId);
+        return inscricao.map(ResponseEntity::ok).orElse(null);
     }
 
-    @GetMapping
-    public List<Inscricao> listarTodas() {
-        return service.listarTodas();
-    }
-
-    @GetMapping("/evento/{eventoId}")
-    public List<Inscricao> listarPorEvento(@PathVariable String eventoId) {
-        return service.listarPorEvento(eventoId);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deletar(@PathVariable String id) {
-        service.deletar(id);
-    }
-
-    // 🔥 NOVO ENDPOINT: DOWNLOAD CSV
-    @GetMapping("/evento/{eventoId}/download")
-    public void baixarInscricoesPorEvento(
-            @PathVariable String eventoId,
-            HttpServletResponse response) throws IOException {
-
-        List<Inscricao> inscricoes = service.listarPorEvento(eventoId);
-
-        response.setContentType("text/csv");
-        response.setHeader(
-                "Content-Disposition",
-                "attachment; filename=inscricoes_evento_" + eventoId + ".csv"
-        );
-
-        PrintWriter writer = response.getWriter();
-        writer.println("Nome,CPF,Email,Telefone,Instituicao");
-
-        for (Inscricao i : inscricoes) {
-            writer.println(
-                i.getNome() + "," +
-                i.getCpf() + "," +
-                i.getEmail() + "," +
-                i.getTelefone() + "," +
-                i.getInstituicao()
-            );
-        }
-
-        writer.flush();
-        writer.close();
+    @DeleteMapping("/excluir/{id}")
+    public ResponseEntity<String> excluirInscricao(@PathVariable String id) {
+        String msg = inscricaoService.excluirInscricao(id);
+        return ResponseEntity.ok(msg);
     }
 }

@@ -1,6 +1,6 @@
 package com.br.femmcode.femmcode.dtos;
 
-import com.br.femmcode.femmcode.models.StatusEmpresa;
+import com.br.femmcode.femmcode.enuns.StatusEmpresa;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

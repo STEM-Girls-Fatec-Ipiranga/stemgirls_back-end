@@ -51,4 +51,10 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body("Erro no upload: " + e.getMessage());
         }
     }
+
+    @GetMapping("/encontrar/{email}")
+    public ResponseEntity<Usuario> encontrar(@PathVariable String email){
+        Usuario user = usuarioService.loadUserByEmail(email);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 }

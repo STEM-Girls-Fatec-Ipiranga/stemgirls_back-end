@@ -3,11 +3,8 @@ package com.br.femmcode.femmcode.services;
 import com.br.femmcode.femmcode.dtos.EmpresaDTO;
 import com.br.femmcode.femmcode.enuns.Role;
 import com.br.femmcode.femmcode.models.Empresa;
-import com.br.femmcode.femmcode.models.Notificacao;
-import com.br.femmcode.femmcode.services.NotificacaoService;
-import com.br.femmcode.femmcode.models.StatusEmpresa;
+import com.br.femmcode.femmcode.enuns.StatusEmpresa;
 import com.br.femmcode.femmcode.repositories.EmpresaRepository;
-import com.br.femmcode.femmcode.repositories.NotificacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,16 +38,17 @@ public class EmpresaService implements UserDetailsService {
              throw new RuntimeException("CNPJ já está cadastrado!");
         }
 
-        Empresa newEmpresa = new Empresa();
-        newEmpresa.setNomeEmpresa(dto.nomeEmpresa());
-        newEmpresa.setCnpj(dto.cnpj());
-        newEmpresa.setEmail(dto.email());
-        newEmpresa.setSenha(passwordEncoder.encode(dto.senha()));
-        newEmpresa.setTelefone(dto.telefone());
-        newEmpresa.setStatus(StatusEmpresa.PENDENTE);
-        newEmpresa.setRole(Role.EMPRESA);
+        Empresa novaEmpresa = new Empresa();
 
-        Empresa empresa = empresaRepository.save(newEmpresa);
+        novaEmpresa.setNome(dto.nomeEmpresa());
+        novaEmpresa.setCnpj(dto.cnpj());
+        novaEmpresa.setEmail(dto.email());
+        novaEmpresa.setSenha(passwordEncoder.encode(dto.senha()));
+        novaEmpresa.setTelefone(dto.telefone());
+        novaEmpresa.setStatus(StatusEmpresa.PENDENTE);
+        novaEmpresa.setRole(Role.EMPRESA);
+
+        Empresa empresa = empresaRepository.save(novaEmpresa);
         emailService.sendEmpresaApprovalEmail(empresa);
         notificacaoService.criarNotificacao(empresa);
 
