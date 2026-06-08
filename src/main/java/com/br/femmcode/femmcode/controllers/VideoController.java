@@ -37,13 +37,13 @@ public class VideoController {
     }
 
     @PostMapping(consumes = {"multipart/form-data"})
-    public Video uploadVideo(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("title") String title,
-            @RequestParam(value = "desc", required = false) String desc,
-            @RequestParam("canalId") String canalId,
-            @RequestParam("owner") String owner,
-            @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail
+        public Video uploadVideo(
+        @RequestParam("link") String link,
+        @RequestParam("title") String title,
+        @RequestParam(value = "desc", required = false) String desc,
+        @RequestParam("canalId") String canalId,
+        @RequestParam("owner") String owner,
+        @RequestParam(value = "thumb", required = false) MultipartFile thumb
     ) throws IOException {
 
         // cria pasta se necessário
@@ -52,36 +52,23 @@ public class VideoController {
             throw new IOException("Não foi possível criar diretório de upload: " + UPLOAD_DIR);
         }
 
-        // nome original limpo (sem espaços)
-        String originalName = file.getOriginalFilename() != null
-                ? file.getOriginalFilename().replaceAll("\\s+", "_")
-                : "uploaded_file";
-
-        
-
-        // nome final salvo no disco (com timestamp para evitar sobrescrever)
-        String finalFileName = System.currentTimeMillis() + "_" + originalName;
-        Path filePath = Paths.get(UPLOAD_DIR, finalFileName);
-        Files.write(filePath, file.getBytes());
 
         Video video = new Video();
         video.setTitle(title);
         video.setDesc(desc);
         video.setCanalId(canalId);
         video.setOwner(owner);
-        video.setFileName(finalFileName);       // nome real do arquivo salvo no disco
-        video.setOriginalName(originalName);    // guarda o original pra dedupe
-        video.setUrl(BASE_URL + "/uploads/videos/" + finalFileName);
         video.setCreatedAt(System.currentTimeMillis());
+        video.setUrl(link);
 
         // thumbnail opcional (salva na mesma pasta)
-        if (thumbnail != null && !thumbnail.isEmpty()) {
-            String thumbOriginal = thumbnail.getOriginalFilename() != null
-                    ? thumbnail.getOriginalFilename().replaceAll("\\s+", "_")
+        if (thumb != null && !thumb.isEmpty()) {
+            String thumbOriginal = thumb.getOriginalFilename() != null
+                    ? thumb.getOriginalFilename().replaceAll("\\s+", "_")
                     : "thumb";
             String thumbName = System.currentTimeMillis() + "_thumb_" + thumbOriginal;
             Path thumbPath = Paths.get(UPLOAD_DIR, thumbName);
-            Files.write(thumbPath, thumbnail.getBytes());
+            Files.write(thumbPath, thumb.getBytes());
             video.setThumbnail(BASE_URL + "/uploads/videos/" + thumbName);
         }
 
