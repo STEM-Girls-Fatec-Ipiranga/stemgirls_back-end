@@ -82,8 +82,9 @@ public class EventoService {
         return eventoRepository.findByTitulo(titulo);
     }
 
-    public Optional<Evento> encontrarEvento(String id){
-        return eventoRepository.findById(id);
+    public Evento encontrarEvento(String id){
+        return eventoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Evento não encontrado!"));
     }
 
     public Optional<List<Evento>> buscarMeusEventos(String organizadorId){
@@ -91,8 +92,13 @@ public class EventoService {
     }
 
     public Inscricao adicionarInscricao(String eventoId, InscricaoDTO dto) {
-        Optional<Inscricao> insc = inscricaoService.encontrarInscricao(dto.participanteId(), eventoId);
-        return insc.orElseGet(() -> inscricaoService.criarInscricao(eventoId, dto));
+        Inscricao insc = inscricaoService.encontrarInscricao(dto.participanteId(), eventoId);
+        if(insc!=null){
+            return insc;
+        }else{
+            return inscricaoService.criarInscricao(eventoId, dto);
+        }
+        //return insc.orElseGet(() -> inscricaoService.criarInscricao(eventoId, dto));
     }
 
     public void exportarInscrcicoesCSV(Writer writer, List<Inscricao> listaInscricoes) throws IOException {

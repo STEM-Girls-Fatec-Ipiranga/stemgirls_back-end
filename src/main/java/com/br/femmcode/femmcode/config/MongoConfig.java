@@ -6,4 +6,5 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @Configuration
 @EnableMongoRepositories(basePackages = "com.br.femmcode.femmcode.repositories")
 public class MongoConfig {
+
 }

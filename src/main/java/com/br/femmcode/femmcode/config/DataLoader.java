@@ -42,9 +42,9 @@ public class DataLoader implements CommandLineRunner {
 
         Optional<Usuario> organizador = usuarioRepository.findByEmail("talitinhacosta246@gmail.com");
 
-        criarEvento("Reunião meninas digitais", organizador.orElse(null), "Reunião para trocar ideias e conhecimentos sobre o projeto buscando o aprimoramento.", endereco, "26/06/2025", "19:00", "ao-vivo", "/assets/img/mulheres-tecnologia.jpg");
-        criarEvento("Palestra tecnologia inclusiva", organizador.orElse(null), "Discussão sobre inclusão de mulheres no mercado de tecnologia.", endereco, "28/06/2025", "15:00", "presencial", "/assets/img/mulheres-tecnologia.jpg");
-        criarEvento("Workshop React para iniciantes", organizador.orElse(null), "Oficina prática para quem deseja aprender os fundamentos do React.", endereco, "05/07/2025", "18:00", "remoto", "/assets/img/mulheres-tecnologia.jpg");
+        criarEvento("Reunião meninas digitais", organizador.orElse(null), "Reunião para trocar ideias e conhecimentos sobre o projeto buscando o aprimoramento.", endereco, "26/06/2025", "19:00", "Ao-vivo", "https://res.cloudinary.com/dkgqg84ay/image/upload/v1779230819/meninas-digitais_mnrki5.jpg");
+        criarEvento("Palestra tecnologia inclusiva", organizador.orElse(null), "Discussão sobre inclusão de mulheres no mercado de tecnologia.", endereco, "28/06/2025", "15:00", "Presencial", "https://res.cloudinary.com/dkgqg84ay/image/upload/v1779230859/meninas_digitais_congresso_a8ne16.jpg");
+        criarEvento("Workshop React para iniciantes", organizador.orElse(null), "Oficina prática para quem deseja aprender os fundamentos do React.", endereco, "05/07/2025", "18:00", "Remoto", "https://res.cloudinary.com/dkgqg84ay/image/upload/v1779230883/womakers1_r25z47.jpg");
     }
 
     private void criarModerador(String email, String senha, String nome, String nomeUsuario) {

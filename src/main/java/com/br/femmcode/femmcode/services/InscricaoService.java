@@ -42,8 +42,9 @@ public class InscricaoService {
         return inscricaoRepository.save(novaInscricao);
     }
 
-    public Optional<Inscricao> encontrarInscricao(String participanteId, String eventoId){
-        return inscricaoRepository.findByParticipanteAndEvento(participanteId, eventoId);
+    public Inscricao encontrarInscricao(String participanteId, String eventoId){
+        Optional<Inscricao> insc = inscricaoRepository.findByParticipanteAndEvento(participanteId, eventoId);
+        return insc.orElse(null);
     }
 
     public Optional<List<Inscricao>> buscarPorParticipante(String participanteId){

@@ -34,8 +34,9 @@ public class InscricaoController {
 
     @GetMapping("/{participanteId}/{eventoId}")
     public ResponseEntity<Inscricao> encontrarInscricao(@PathVariable String participanteId, @PathVariable String eventoId){
-        Optional<Inscricao> inscricao = inscricaoService.encontrarInscricao(participanteId, eventoId);
-        return inscricao.map(ResponseEntity::ok).orElse(null);
+        Inscricao inscricao = inscricaoService.encontrarInscricao(participanteId, eventoId);
+        //return inscricao.map(ResponseEntity::ok).orElse(null);
+        return new ResponseEntity<>(inscricao, HttpStatus.OK);
     }
 
     @DeleteMapping("/excluir/{id}")

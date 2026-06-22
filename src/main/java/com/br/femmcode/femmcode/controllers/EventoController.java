@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/evento")
-@CrossOrigin(origins = "http://localhost:5174")
+@CrossOrigin(origins = "http://localhost:5173")
 public class EventoController {
 
     @Autowired
@@ -40,8 +40,8 @@ public class EventoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Evento> encontrarEvento(@PathVariable String id) {
-        Optional<Evento> evento = eventoService.encontrarEvento(id);
-        return evento.map(ResponseEntity::ok).orElse(null);
+        Evento evento = eventoService.encontrarEvento(id);
+        return new ResponseEntity<>(evento, HttpStatus.OK);
     }
 
     @PostMapping("/atualizar/{id}")
