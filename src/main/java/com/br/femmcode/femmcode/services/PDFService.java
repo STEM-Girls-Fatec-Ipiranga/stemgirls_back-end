@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 @Service
 public class PDFService {
@@ -40,12 +41,6 @@ public class PDFService {
             String titulo = "Certificado";
             String participante = "Raquel";
 
-            String linha1 = "Certificamos que " + usuario + " participou do evento";
-            String linha2 = evento + " divulgado pela plataforma/projeto STEM GIRLS,";
-            String linha3 = "realizado no dia " + data + ". Parabenizamos pela participação exemplar";
-            String linha4 = "e desejamos contínuo sucesso em suas futuras iniciativas.";
-            String linha5 = "__________________________________";
-            String linha6 = "Responsável";
             PDFont fonte = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
 
             float tamanhoTitulo = 80;
@@ -54,14 +49,23 @@ public class PDFService {
 
             PDRectangle pageSize = page.getMediaBox();
 
-            float tituloX = centralizarTexto(titulo, tamanhoTitulo, fonte, pageSize);
-            float primeiraLinhaX = centralizarTexto(linha1, tamanhoDescricao, fonte, pageSize);
-            float segundaLinhaX = centralizarTexto(linha2, tamanhoDescricao, fonte, pageSize);
-            float terceiraLinhaX = centralizarTexto(linha3, tamanhoDescricao, fonte, pageSize);
-            float quartaLinhaX = centralizarTexto(linha4, tamanhoDescricao, fonte, pageSize);
-            float quintaLinhaX = centralizarTexto(linha5, tamanhoDescricao, fonte, pageSize);
-            float sextaLinhaX = centralizarTexto(linha6, tamanhoDescricao, fonte, pageSize);
+            ArrayList<String> linhas = new ArrayList<>();
+            linhas.add("Certificamos que " + usuario + " participou do evento");
+            linhas.add(evento + " divulgado pela plataforma/projeto STEM GIRLS,");
+            linhas.add("realizado no dia " + data + ". Parabenizamos pela participação exemplar");
+            linhas.add("e desejamos contínuo sucesso em suas futuras iniciativas.");
+            linhas.add("__________________________________");
+            linhas.add("Responsável");
 
+            ArrayList<Float> alturas = new ArrayList<>();
+            alturas.add(420f);
+            alturas.add(380f);
+            alturas.add(340f);
+            alturas.add(300f);
+            alturas.add(200f);
+            alturas.add(170f);
+
+            float tituloX = centralizarTexto(titulo, tamanhoTitulo, fonte, pageSize);
             float nomeUsuario = centralizarTexto(usuario, tamanhoNome, fonte, pageSize);
 
             contentStream.beginText();
@@ -82,49 +86,15 @@ public class PDFService {
 
             contentStream.endText();
 
-            contentStream.beginText();
+            for (int i = 0; i < linhas.size(); i++) {
+                float x = centralizarTexto(linhas.get(i), tamanhoDescricao, fonte, pageSize);
 
-            contentStream.setFont(fonte, tamanhoDescricao);
-
-            contentStream.newLineAtOffset(primeiraLinhaX, 420);
-            contentStream.showText(linha1);
-
-            contentStream.endText();
-
-            contentStream.beginText();
-
-            contentStream.newLineAtOffset(segundaLinhaX, 380);
-            contentStream.showText(linha2);
-
-            contentStream.endText();
-
-            contentStream.beginText();
-
-            contentStream.newLineAtOffset(terceiraLinhaX, 340);
-            contentStream.showText(linha3);
-
-            contentStream.endText();
-
-            contentStream.beginText();
-
-            contentStream.newLineAtOffset(quartaLinhaX, 300);
-            contentStream.showText(linha4);
-
-            contentStream.endText();
-
-            contentStream.beginText();
-
-            contentStream.newLineAtOffset(quintaLinhaX, 200);
-            contentStream.showText(linha5);
-
-            contentStream.endText();
-
-            contentStream.beginText();
-
-            contentStream.newLineAtOffset(sextaLinhaX, 170);
-            contentStream.showText(linha6);
-
-            contentStream.endText();
+                contentStream.beginText();
+                contentStream.setFont(fonte, tamanhoDescricao);
+                contentStream.newLineAtOffset(x, alturas.get(i));
+                contentStream.showText(linhas.get(i));
+                contentStream.endText();
+            }
 
             contentStream.close();
 
