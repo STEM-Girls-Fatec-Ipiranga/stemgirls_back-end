@@ -1,64 +1,62 @@
 package com.br.femmcode.femmcode.controllers;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import com.br.femmcode.femmcode.dtos.*;
+import com.br.femmcode.femmcode.dtos.Dtos.*;
 import com.br.femmcode.femmcode.services.ComunidadeService;
-
-import java.net.URI;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/comunidades")
+@RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:5173")   // porta do seu front (Vite)
 public class ComunidadeController {
 
-    private final ComunidadeService comunidadeService;
+    private final ComunidadeService service;
 
-    public ComunidadeController(ComunidadeService comunidadeService) {
-        this.comunidadeService = comunidadeService;
+    public ComunidadeController(ComunidadeService service) {
+        this.service = service;
     }
 
-    @PostMapping
-    public ResponseEntity<ComunidadeRespostaDTO> criar(@Validated @RequestBody CriarComunidadeDTO dto) {
-        ComunidadeRespostaDTO criada = comunidadeService.criar(dto);
-        return ResponseEntity.created(URI.create("/api/comunidades/" + criada.getId())).body(criada);
+    @GetMapping("/comunidades")
+    public List<ComunidadeResponse> listar(@RequestParam(required = false) String busca,
+                                           @RequestParam(required = false) String filtro,
+                                           @RequestParam(required = false) String usuarioId) {
+        return service.listar(busca, filtro, usuarioId);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ComunidadeRespostaDTO>> listarTodas() {
-        return ResponseEntity.ok(comunidadeService.listarTodas());
+    @PostMapping("/comunidades")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ComunidadeResponse criar(@Valid @RequestBody ComunidadeRequest r) {
+        return service.criar(r);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ComunidadeRespostaDTO> buscarPorId(@PathVariable String id) {
-        return ResponseEntity.ok(comunidadeService.buscarPorId(id));
+    @PostMapping("/comunidades/{id}/entrar")
+    public ComunidadeResponse entrar(@PathVariable String id, @RequestParam String usuarioId) {
+        return service.entrar(id, usuarioId);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ComunidadeRespostaDTO> atualizar(@PathVariable String id,
-                                                           @Validated @RequestBody AtualizarComunidadeDTO dto) {
-        return ResponseEntity.ok(comunidadeService.atualizar(id, dto));
+    @GetMapping("/comunidades/{id}/postagens")
+    public List<PostagemResponse> postagensDaComunidade(@PathVariable String id,
+                                                        @RequestParam(required = false) String filtro,
+                                                        @RequestParam(required = false) String usuarioId) {
+        return service.listarPostagens(id, filtro, usuarioId);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable String id) {
-        comunidadeService.deletar(id);
-        return ResponseEntity.noContent().build();
+    @PostMapping("/comunidades/{id}/postagens")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PostagemResponse postar(@PathVariable String id, @Valid @RequestBody PostagemRequest r) {
+        return service.postar(id, r);
     }
 
-    /*@PostMapping("/{id}/posts")
-    public ResponseEntity<ComunidadeRespostaDTO> adicionarPost(@PathVariable("id") String idComunidade,
-                                                               @Validated @RequestBody AdicionarPostDTO dto) {
-        ComunidadeRespostaDTO atualizada = comunidadeService.adicionarPost(idComunidade, dto.getIdPost());
-        return ResponseEntity.ok(atualizada);
-    }*/
+    @GetMapping("/postagens")   // feed geral
+    public List<PostagemResponse> feed(@RequestParam(required = false) String filtro,
+                                       @RequestParam(required = false) String usuarioId) {
+        return service.listarPostagens(null, filtro, usuarioId);
+    }
 
-    @DeleteMapping("/{id}/posts/{idPost}")
-    public ResponseEntity<ComunidadeRespostaDTO> removerPost(@PathVariable("id") String idComunidade,
-                                                             @PathVariable String idPost) {
-        ComunidadeRespostaDTO atualizada = comunidadeService.removerPost(idComunidade, idPost);
-        return ResponseEntity.ok(atualizada);
+    @PostMapping("/postagens/{id}/curtir")
+    public PostagemResponse curtir(@PathVariable String id, @RequestParam String usuarioId) {
+        return service.curtir(id, usuarioId);
     }
 }

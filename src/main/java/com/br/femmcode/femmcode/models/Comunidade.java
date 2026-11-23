@@ -1,87 +1,39 @@
 package com.br.femmcode.femmcode.models;
 
-import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Document(collection = "comunidades")
-@Data
+@Document("comunidades")
 public class Comunidade {
-    @Id
-    private String id;
+    @Id private String id;
     private String nome;
+    @Indexed(unique = true) private String nomeUsuario;
     private String descricao;
-    private String nomeUsuarioCriador;
-    private Instant criadaEm;
-    private Instant atualizadaEm;
-    private List<String> idsPosts = new ArrayList<>();
+    private String imagem;
+    private String donoId;
+    private Set<String> membros = new HashSet<>();
+    private Instant dataCriacao = Instant.now();
 
     public Comunidade() {}
 
-    public Comunidade(String nome, String descricao, String nomeUsuarioCriador) {
-        this.nome = nome;
-        this.descricao = descricao;
-        this.nomeUsuarioCriador = nomeUsuarioCriador;
-        this.criadaEm = Instant.now();
-        this.atualizadaEm = Instant.now();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public String getNomeUsuarioCriador() {
-        return nomeUsuarioCriador;
-    }
-
-    public void setNomeUsuarioCriador(String nomeUsuarioCriador) {
-        this.nomeUsuarioCriador = nomeUsuarioCriador;
-    }
-
-    public Instant getCriadaEm() {
-        return criadaEm;
-    }
-
-    public void setCriadaEm(Instant criadaEm) {
-        this.criadaEm = criadaEm;
-    }
-
-    public Instant getAtualizadaEm() {
-        return atualizadaEm;
-    }
-
-    public void setAtualizadaEm(Instant atualizadaEm) {
-        this.atualizadaEm = atualizadaEm;
-    }
-
-    public List<String> getIdsPosts() {
-        return idsPosts;
-    }
-
-    public void setIdsPosts(List<String> idsPosts) {
-        this.idsPosts = idsPosts;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getNomeUsuario() { return nomeUsuario; }
+    public void setNomeUsuario(String nomeUsuario) { this.nomeUsuario = nomeUsuario; }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public String getImagem() { return imagem; }
+    public void setImagem(String imagem) { this.imagem = imagem; }
+    public String getDonoId() { return donoId; }
+    public void setDonoId(String donoId) { this.donoId = donoId; }
+    public Set<String> getMembros() { return membros; }
+    public void setMembros(Set<String> membros) { this.membros = membros; }
+    public Instant getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(Instant dataCriacao) { this.dataCriacao = dataCriacao; }
 }
