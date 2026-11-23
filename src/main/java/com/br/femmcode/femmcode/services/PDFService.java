@@ -10,20 +10,16 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 @Service
 public class PDFService {
-    private static String PATH = "C:/Users/talit/OneDrive/Documentos/StemGirls/stemgirls_back-end/uploads/pdfs/";
-    private static String PDF_NAME = "certificado.pdf";
-    private static String PDF_FUNDO = "certificado_fundo.png";
 
     public byte[] criarPDF(String usuario, String evento, String data){
         try{
@@ -34,8 +30,16 @@ public class PDFService {
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
 
-            Path imgPath = Paths.get(PATH+PDF_FUNDO);
-            PDImageXObject image = PDImageXObject.createFromFile(imgPath.toAbsolutePath().toString(), document);
+            ClassPathResource fundo = new ClassPathResource("pdfs/certificado_fundo.png");
+            byte[] fundoBytes;
+            try (InputStream input = fundo.getInputStream()) {
+                fundoBytes = input.readAllBytes();
+            }
+            PDImageXObject image = PDImageXObject.createFromByteArray(
+                    document,
+                    fundoBytes,
+                    "certificado_fundo.png"
+            );
             contentStream.drawImage(image, 0, 0);
 
             String titulo = "Certificado";
@@ -97,8 +101,6 @@ public class PDFService {
             }
 
             contentStream.close();
-
-            //document.save(new File(PATH+PDF_NAME));
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             document.save(baos);
