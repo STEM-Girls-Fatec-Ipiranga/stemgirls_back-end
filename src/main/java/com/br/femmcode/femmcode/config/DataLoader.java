@@ -31,6 +31,7 @@ public class DataLoader implements CommandLineRunner {
         criarModerador("martinskauane084@gmail.com", "@Kauane123", "Kauane Martins", "Kauane M.");
         criarModerador("anaclarafontinelescosta@gmail.com", "Anaclara21#_", "Ana Clara", "Ana Clara");
         criarModerador("leticiaribeiros213@gmail.com", "#Cabecadevento213", "Lethicia Ribeiro", "Lethicia R.");
+        criarModerador("mazzei213@gmail.com", "@Mazzei1234", "Marcos Mazzei", "Professor Mazzei");
 
         Endereco endereco = new Endereco();
         endereco.setCidade("São Paulo");
